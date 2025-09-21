@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crowdfunding Campaigns</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #000;
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      border-radius: 8px;
+    }
+    .btn-create {
+      background: #2dd4bf;
+      color: #000;
+      display: block;
+      margin: 20px auto;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: #1f2937;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.6);
+      position: relative;
+    }
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+    .card-content {
+      padding: 15px;
+    }
+    .btn-donate {
+      background: #16a34a;
+      color: #fff;
+      width: 100%;
+      margin-top: 10px;
+    }
+    .btn-delete {
+      background: #ef4444;
+      color: #fff;
+      width: 100%;
+      margin-top: 10px;
+    }
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: #fff;
+      color: #000;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      width: 300px;
+    }
+    .modal-content img {
+      width: 200px;
+      margin: 10px auto;
+    }
+    .close-btn {
+      background: #ef4444;
+      color: #fff;
+      margin-top: 10px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>CROWDFUNDING CAMPAIGNS</h1>
+  <button class="btn btn-create" onclick="openModal('createModal')">CREATE CAMPAIGN</button>
+
+  <div id="campaignsGrid" class="grid">
+    <!-- Default Campaigns -->
+    <div class="card">
+      <img src="comm_plantationdrive.jpg" alt="Community Plantation">
+      <div class="card-content">
+        <h2>Community Plantation Drives</h2>
+        <p>This is a campaign to bring together local residents, volunteers, 
+        and donors to plant and maintain trees in urban and rural areas. 
+        The goal is not just planting saplings, but ensuring their survival 
+        through community care.</p>
+        <button class="btn btn-donate" onclick="openQRModal('sample_qr_1.png')">DONATE</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="lib.png" alt="Community Library">
+      <div class="card-content">
+        <h2>Community Library</h2>
+        <p>It aims to create an accessible learning space where children, women, and youth can
+             read, learn, and grow together. It provides books, digital resources, and a safe 
+             study environment for communities with limited access to educational materials.</p>
+        <button class="btn btn-donate" onclick="openQRModal('sample_qr_1.png')">DONATE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Code Modal -->
+  <div id="qrModal" class="modal">
+    <div class="modal-content">
+      <h2>Scan to Donate</h2>
+      <img id="qrImage" src="sample_qr_1.png" alt="QR Code">
+      <button class="btn close-btn" onclick="closeModal('qrModal')">Close</button>
+    </div>
+  </div>
+
+  <!-- Create Campaign Modal -->
+  <div id="createModal" class="modal">
+    <div class="modal-content">
+      <h2>Create a New Campaign</h2>
+      <input type="text" id="campaignTitle" placeholder="Campaign Title">
+      <textarea id="campaignDesc" placeholder="Campaign Description"></textarea>
+      <input type="file" id="campaignImage" accept="image/*">
+      <input type="file" id="qrUpload" accept="image/*">
+      <button class="btn btn-create" onclick="addCampaign()">Submit Campaign</button>
+      <button class="btn close-btn" onclick="closeModal('createModal')">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    function openModal(id) {
+      document.getElementById(id).style.display = 'flex';
+    }
+    function closeModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+
+    function openQRModal(qrSrc) {
+      document.getElementById("qrImage").src = qrSrc;
+      openModal("qrModal");
+    }
+
+    function addCampaign() {
+      const title = document.getElementById("campaignTitle").value;
+      const desc = document.getElementById("campaignDesc").value;
+      const imageFile = document.getElementById("campaignImage").files[0];
+      const qrFile = document.getElementById("qrUpload").files[0];
+
+      if (!title || !desc || !imageFile || !qrFile) {
+        alert("Please fill in all fields and upload images.");
+        return;
+      }
+
+      const readerImage = new FileReader();
+      const readerQR = new FileReader();
+
+      readerImage.onload = function(e) {
+        const imgSrc = e.target.result;
+        readerQR.onload = function(e2) {
+          const qrSrc = e2.target.result;
+
+          const card = document.createElement("div");
+          card.classList.add("card");
+          card.innerHTML = `
+            <img src="${imgSrc}" alt="${title}">
+            <div class="card-content">
+              <h2>${title}</h2>
+              <p>${desc}</p>
+              <button class="btn btn-donate" onclick="openQRModal('${qrSrc}')">DONATE</button>
+              <button class="btn btn-delete" onclick="this.closest('.card').remove()">DELETE</button>
+            </div>
+          `;
+          document.getElementById("campaignsGrid").appendChild(card);
+        };
+        readerQR.readAsDataURL(qrFile);
+      };
+      readerImage.readAsDataURL(imageFile);
+
+      closeModal("createModal");
+    }
+  </script>
+</body>
+</html>

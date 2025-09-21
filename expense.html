@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Smart Expense Tracker</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap');
+
+    body {
+      margin: 0;
+      font-family: 'Didact Gothic', sans-serif;
+      background-color: #000;
+      color: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    header {
+      background-color: #d6f7f7;
+      width: 90vw;
+      max-width: 900px;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-radius: 5px;
+    }
+
+    header h1 {
+      font-weight: 400;
+      font-size: 2rem;
+      letter-spacing: 3px;
+      margin: 0;
+    }
+
+    header img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+    }
+
+    main {
+      background-color: #90e0d9;
+      width: 90vw;
+      max-width: 900px;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 20px;
+      padding: 20px;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    section {
+      background-color: #ccfffc;
+      border-radius: 5px;
+      padding: 15px;
+      box-sizing: border-box;
+    }
+
+    #add-expense {
+      background-color: #b2e8e1;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+
+    #add-expense label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+
+    #add-expense input,
+    #add-expense select {
+      width: 100%;
+      padding: 7px 10px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 5px;
+      background-color: #d3d3d3;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    #add-expense button {
+      width: 100%;
+      padding: 10px;
+      background-color: #ea93ff;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #add-expense button:hover {
+      background-color: #c168cc;
+    }
+
+    #daily-expenses {
+      background-color: #d5f4f0;
+      padding: 15px;
+      border-radius: 5px;
+      height: 300px;
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+
+    #daily-expenses-title {
+      text-align: center;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .date-group {
+      margin-bottom: 15px;
+    }
+
+    .date-heading {
+      font-weight: 700;
+      margin-bottom: 8px;
+      font-size: 1rem;
+      color: #333;
+    }
+
+    .expense-item {
+      background: white;
+      margin-bottom: 6px;
+      padding: 6px 10px;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 0 3px rgba(0,0,0,0.1);
+    }
+
+    .expense-info {
+      flex-grow: 1;
+      font-size: 0.9rem;
+      overflow-wrap: anywhere;
+    }
+
+    .expense-actions button {
+      margin-left: 5px;
+      background: #ea93ff;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      color: white;
+      font-size: 0.8rem;
+      transition: background-color 0.3s ease;
+    }
+
+    .expense-actions button:hover {
+      background-color: #c168cc;
+    }
+
+    /* Modal styles */
+    #modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background-color: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    #modal-content {
+      background-color: #d5f4f0;
+      padding: 20px;
+      border-radius: 8px;
+      width: 320px;
+      box-sizing: border-box;
+    }
+
+    #modal-content label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+
+    #modal-content input,
+    #modal-content select {
+      width: 100%;
+      padding: 7px 10px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 5px;
+      background-color: #d3d3d3;
+    }
+
+    #modal-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    #modal-buttons button {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    #modal-save {
+      background-color: #5aab61;
+      color: white;
+    }
+
+    #modal-save:hover {
+      background-color: #3f7f3e;
+    }
+
+    #modal-cancel {
+      background-color: #ea93ff;
+      color: white;
+    }
+
+    #modal-cancel:hover {
+      background-color: #c168cc;
+    }
+
+    /* Summary */
+    #currency-summary {
+      margin-top: 15px;
+      padding: 10px;
+      background: #b2e8e1;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>SMART EXPENSE TRACKER</h1>
+  <img src="https://cdn-icons-png.flaticon.com/512/2838/2838912.png" alt="expense icon" />
+</header>
+
+<main>
+  <section>
+    <div id="add-expense">
+      <label for="expense-name">Expense Name:</label>
+      <input type="text" id="expense-name" placeholder="e.g., Food" />
+
+      <label for="expense-amount">Amount:</label>
+      <input type="number" id="expense-amount" placeholder="e.g., 25" min="0" step="0.01" />
+
+      <label for="expense-category">Category:</label>
+      <select id="expense-category">
+        <option value="Food">Food</option>
+        <option value="Transport">Transport</option>
+        <option value="Entertainment">Entertainment</option>
+        <option value="Bills">Bills</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <label for="expense-date">Date:</label>
+      <input type="date" id="expense-date" />
+
+      <label for="expense-currency">Currency:</label>
+      <select id="expense-currency">
+        <option value="USD">USD ($)</option>
+        <option value="EUR">EUR (€)</option>
+        <option value="GBP">GBP (£)</option>
+        <option value="INR">INR (₹)</option>
+        <option value="JPY">JPY (¥)</option>
+      </select>
+
+      <button id="add-expense-btn">ADD EXPENSE</button>
+    </div>
+
+    <div id="daily-expenses">
+      <div id="daily-expenses-title">DAILY EXPENSES:</div>
+      <div id="expenses-list"></div>
+    </div>
+  </section>
+
+  <section id="chart-container">
+    <div id="chart-title">Expense Distribution</div>
+    <canvas id="expense-chart"></canvas>
+    <div id="currency-summary"></div>
+  </section>
+</main>
+
+<!-- Edit Modal -->
+<div id="modal">
+  <div id="modal-content">
+    <h3>Edit Expense</h3>
+    <label for="edit-expense-name">Expense Name:</label>
+    <input type="text" id="edit-expense-name" />
+
+    <label for="edit-expense-amount">Amount:</label>
+    <input type="number" id="edit-expense-amount" min="0" step="0.01" />
+
+    <label for="edit-expense-category">Category:</label>
+    <select id="edit-expense-category">
+      <option value="Food">Food</option>
+      <option value="Transport">Transport</option>
+      <option value="Entertainment">Entertainment</option>
+      <option value="Bills">Bills</option>
+      <option value="Other">Other</option>
+    </select>
+
+    <label for="edit-expense-date">Date:</label>
+    <input type="date" id="edit-expense-date" />
+
+    <label for="edit-expense-currency">Currency:</label>
+    <select id="edit-expense-currency">
+      <option value="USD">USD ($)</option>
+      <option value="EUR">EUR (€)</option>
+      <option value="GBP">GBP (£)</option>
+      <option value="INR">INR (₹)</option>
+      <option value="JPY">JPY (¥)</option>
+    </select>
+
+    <div id="modal-buttons">
+      <button id="modal-save">Save</button>
+      <button id="modal-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const expenseNameInput = document.getElementById('expense-name');
+  const expenseAmountInput = document.getElementById('expense-amount');
+  const expenseCategoryInput = document.getElementById('expense-category');
+  const expenseDateInput = document.getElementById('expense-date');
+  const expenseCurrencyInput = document.getElementById('expense-currency');
+  const addExpenseBtn = document.getElementById('add-expense-btn');
+  const expensesList = document.getElementById('expenses-list');
+
+  // Modal elements
+  const modal = document.getElementById('modal');
+  const editNameInput = document.getElementById('edit-expense-name');
+  const editAmountInput = document.getElementById('edit-expense-amount');
+  const editCategoryInput = document.getElementById('edit-expense-category');
+  const editDateInput = document.getElementById('edit-expense-date');
+  const editCurrencyInput = document.getElementById('edit-expense-currency');
+  const modalSaveBtn = document.getElementById('modal-save');
+  const modalCancelBtn = document.getElementById('modal-cancel');
+
+  const categories = ['Food', 'Transport', 'Entertainment', 'Bills', 'Other'];
+  let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+  let currentEditId = null;
+
+  // Chart setup
+  const ctx = document.getElementById('expense-chart').getContext('2d');
+  const expenseChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: categories,
+      datasets: [{
+        label: 'Expenses',
+        data: [0, 0, 0, 0, 0],
+        backgroundColor: ['#ff6384','#3a9bdc','#f3ca74','#6bc5b6','#8a72e6'],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'bottom' } }
+    }
+  });
+
+  function getCurrencySymbol(curr) {
+    return {USD:'$',EUR:'€',GBP:'£',INR:'₹',JPY:'¥'}[curr] || '';
+  }
+
+  function updateExpensesDisplay() {
+    expensesList.innerHTML = '';
+
+    if (expenses.length === 0) {
+      expensesList.textContent = 'No expenses yet.';
+      return;
+    }
+
+    // Group by date
+    const grouped = {};
+    expenses.forEach(exp => {
+      if (!grouped[exp.date]) grouped[exp.date] = [];
+      grouped[exp.date].push(exp);
+    });
+
+    // Sort dates descending
+    const sortedDates = Object.keys(grouped).sort((a,b) => b.localeCompare(a));
+
+    sortedDates.forEach(date => {
+      const groupDiv = document.createElement('div');
+      groupDiv.classList.add('date-group');
+
+      const heading = document.createElement('div');
+      heading.classList.add('date-heading');
+      heading.textContent = date;
+      groupDiv.appendChild(heading);
+
+      grouped[date].forEach(expense => {
+        const div = document.createElement('div');
+        div.classList.add('expense-item');
+
+        const infoDiv = document.createElement('div');
+        infoDiv.classList.add('expense-info');
+        infoDiv.textContent = `${expense.name} (${expense.category}): ${getCurrencySymbol(expense.currency)}${expense.amount.toFixed(2)}`;
+
+        const actionsDiv = document.createElement('div');
+        actionsDiv.classList.add('expense-actions');
+
+        const editBtn = document.createElement('button');
+        editBtn.textContent = 'Edit';
+        editBtn.addEventListener('click', () => openEditModal(expense.id));
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.addEventListener('click', () => deleteExpense(expense.id));
+
+        actionsDiv.appendChild(editBtn);
+        actionsDiv.appendChild(deleteBtn);
+
+        div.appendChild(infoDiv);
+        div.appendChild(actionsDiv);
+        groupDiv.appendChild(div);
+      });
+
+      expensesList.appendChild(groupDiv);
+    });
+  }
+
+  function updateChart() {
+    const sums = { Food:0, Transport:0, Entertainment:0, Bills:0, Other:0 };
+    expenses.forEach(e => sums[e.category] += e.amount);
+    expenseChart.data.datasets[0].data = categories.map(cat => sums[cat]);
+    expenseChart.update();
+  }
+
+  function updateSummary() {
+    const totals = {};
+    expenses.forEach(e => {
+      if (!totals[e.currency]) totals[e.currency] = 0;
+      totals[e.currency] += e.amount;
+    });
+    const summaryDiv = document.getElementById('currency-summary');
+    summaryDiv.innerHTML = Object.entries(totals)
+      .map(([curr, total]) => `${curr} ${getCurrencySymbol(curr)}${total.toFixed(2)}`)
+      .join(' | ') || 'No expenses yet.';
+  }
+
+  function saveExpenses() {
+    localStorage.setItem('expenses', JSON.stringify(expenses));
+  }
+
+  function addExpense() {
+    const name = expenseNameInput.value.trim();
+    const amount = parseFloat(expenseAmountInput.value);
+    const category = expenseCategoryInput.value;
+    const date = expenseDateInput.value || new Date().toISOString().slice(0,10);
+    const currency = expenseCurrencyInput.value;
+
+    if (!name || isNaN(amount) || amount <= 0) {
+      alert('Please fill all fields correctly.');
+      return;
+    }
+
+    expenses.push({ id: Date.now(), name, amount, category, date, currency });
+    saveExpenses();
+    updateExpensesDisplay();
+    updateChart();
+    updateSummary();
+
+    expenseNameInput.value = '';
+    expenseAmountInput.value = '';
+    expenseCategoryInput.value = 'Food';
+    expenseDateInput.value = '';
+    expenseCurrencyInput.value = 'USD';
+  }
+
+  function openEditModal(id) {
+    currentEditId = id;
+    const exp = expenses.find(e => e.id === id);
+    if (!exp) return;
+    editNameInput.value = exp.name;
+    editAmountInput.value = exp.amount;
+    editCategoryInput.value = exp.category;
+    editDateInput.value = exp.date;
+    editCurrencyInput.value = exp.currency;
+    modal.style.display = 'flex';
+  }
+
+  function closeModal() {
+    modal.style.display = 'none';
+    currentEditId = null;
+  }
+
+  function saveEdit() {
+    const name = editNameInput.value.trim();
+    const amount = parseFloat(editAmountInput.value);
+    const category = editCategoryInput.value;
+    const date = editDateInput.value || new Date().toISOString().slice(0,10);
+    const currency = editCurrencyInput.value;
+
+    if (!name || isNaN(amount) || amount <= 0) {
+      alert('Please fill all fields correctly.');
+      return;
+    }
+
+    const index = expenses.findIndex(e => e.id === currentEditId);
+    if (index !== -1) {
+      expenses[index] = { id: currentEditId, name, amount, category, date, currency };
+      saveExpenses();
+      updateExpensesDisplay();
+      updateChart();
+      updateSummary();
+    }
+    closeModal();
+  }
+
+  function deleteExpense(id) {
+    if (!confirm('Delete this expense?')) return;
+    expenses = expenses.filter(e => e.id !== id);
+    saveExpenses();
+    updateExpensesDisplay();
+    updateChart();
+    updateSummary();
+  }
+
+  addExpenseBtn.addEventListener('click', addExpense);
+  modalSaveBtn.addEventListener('click', saveEdit);
+  modalCancelBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+  // Initialize
+  updateExpensesDisplay();
+  updateChart();
+  updateSummary();
+</script>
+
+</body>
+</html>
