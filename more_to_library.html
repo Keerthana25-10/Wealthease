@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Community Library — Campaign</title>
+  <style>
+    :root{
+      --bg:#0a0a0a; /* black */
+      --panel:#dcdcdc; /* light grey */
+      --accent:#ffffff;
+      --max-width:1000px;
+    }
+    html,body{height:100%;margin:0;font-family:Georgia, 'Times New Roman', serif;background:var(--bg);color:#111}
+    .container{max-width:var(--max-width);margin:28px auto;padding:18px;box-sizing:border-box}
+    header{background:var(--panel);padding:14px 18px;border-top:8px solid #000;border-bottom:8px solid #000}
+    header h1{margin:0;font-size:42px;text-align:center;letter-spacing:2px}
+
+    .grid{display:grid;grid-template-columns:1fr 360px;grid-gap:18px;margin-top:18px}
+
+    .panel{background:var(--panel);padding:18px;border:6px solid #000;box-sizing:border-box;position:relative}
+    .panel h3{margin-top:0;font-family:Georgia, 'Times New Roman', serif; font-size:18px}
+    .panel ul{margin:8px 0 0 18px;padding:0;line-height:1.6}
+    .panel p{margin:8px 0 0}
+
+    .image-box{display:flex;align-items:flex-start;justify-content:center}
+    .image-box img{width:100%;height:auto;display:block;border:6px solid #000}
+
+    .full{grid-column:1 / -1}
+
+    /* responsive */
+    @media (max-width:900px){
+      .grid{grid-template-columns:1fr;}
+      .image-box img{max-height:220px;object-fit:cover}
+      header h1{font-size:32px}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>COMMUNITY LIBRARY</h1>
+    </header>
+
+    <div class="grid">
+      <div class="panel">
+        <h3>WHY IT MATTERS?</h3>
+        <ul>
+          <li>Supports education for underprivileged children.</li>
+          <li>Encourages women and youth to continue learning.</li>
+          <li>Promotes reading habits, digital literacy, and career awareness.</li>
+          <li>Builds a knowledge hub that strengthens the whole community.</li>
+        </ul>
+        <p>Your support makes lifelong learning accessible and helps break the cycle of poverty through education.</p>
+      </div>
+
+      <div class="image-box">
+        <!-- Replace the src with your image path -->
+        <img src="lib.png" alt="community library image">
+      </div>
+
+      <div class="panel full">
+        <h3>HOW WILL THE FUNDS BE USED?</h3>
+        <ul>
+          <li>Renting or renovating a small community space.</li>
+          <li>Purchasing books (children’s books, exam guides, vocational skills, health awareness).</li>
+          <li>Setting up shelves, furniture, and lighting.</li>
+          <li>Adding computers and internet for digital learning.</li>
+          <li>Hiring/volunteering librarians or coordinators.</li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <h3>IMPACT</h3>
+        <ul>
+          <li>Every ₹1,000 donation provides 10 new books.</li>
+          <li>A single library can serve 500–1,000 people in a village/town.</li>
+          <li>Improves literacy rates and school performance.</li>
+          <li>Empowers women and youth with resources for skill development.</li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <h3>DONOR ENGAGEMENT</h3>
+        <ul>
+          <li>Donors get recognition on a “Wall of Supporters.”</li>
+          <li>Periodic updates with photos of children and families using the library.</li>
+          <li>Option to donate books directly.</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

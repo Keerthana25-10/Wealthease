@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Expense Summary</title>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Expense Summary</title>
+<style>
     body {
       font-family: Arial, sans-serif;
       background: #f0f9f9;
@@ -52,32 +53,28 @@
   </style>
 </head>
 <body>
-  <header>
-    <h1>Monthly & Weekly Expense Summary</h1>
-  </header>
-
-  <!-- Budget Summary -->
-  <div class="summary-box">
-    <h3>Budget Summary</h3>
-    <p>Monthly Spent: <span id="monthlySpent">0</span> / Limit: <span id="monthlyLimitDisplay">0</span></p>
-    <p>Weekly Spent: <span id="weeklySpent">0</span> / Limit: <span id="weeklyLimitDisplay">0</span></p>
-    <p id="warningMsg" class="warning"></p>
-  </div>
-
-  <!-- Weekly Trends -->
-  <div class="summary-box">
-    <h3>Weekly Spending Trends</h3>
-    <canvas id="spendingChart"></canvas>
-  </div>
-
-  <!-- Monthly Calendar -->
-  <div class="summary-box">
-    <h3>Monthly Calendar</h3>
-    <div id="calendar"></div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
+<header>
+<h1>Monthly &amp; Weekly Expense Summary</h1>
+</header>
+<!-- Budget Summary -->
+<div class="summary-box">
+<h3>Budget Summary</h3>
+<p>Monthly Spent: <span id="monthlySpent">0</span> / Limit: <span id="monthlyLimitDisplay">0</span></p>
+<p>Weekly Spent: <span id="weeklySpent">0</span> / Limit: <span id="weeklyLimitDisplay">0</span></p>
+<p class="warning" id="warningMsg"></p>
+</div>
+<!-- Weekly Trends -->
+<div class="summary-box">
+<h3>Weekly Spending Trends</h3>
+<canvas id="spendingChart"></canvas>
+</div>
+<!-- Monthly Calendar -->
+<div class="summary-box">
+<h3>Monthly Calendar</h3>
+<div id="calendar"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
     const expenses = JSON.parse(localStorage.getItem('expenses')) || [];
     const monthlyLimit = parseFloat(localStorage.getItem('monthlyLimit')) || 0;
     const weeklyLimit = parseFloat(localStorage.getItem('weeklyLimit')) || 0;
@@ -137,21 +134,37 @@
     }
 
     function buildWeeklyChart() {
-      const weeklyTotals = [0,0,0,0];
-      expenses.forEach(e=>{
-        const wk = getWeekNumber(new Date(e.date))-1;
-        if (wk>=0 && wk<4) weeklyTotals[wk]+=e.amount;
-      });
-      const ctx = document.getElementById('spendingChart').getContext('2d');
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: ['Week 1','Week 2','Week 3','Week 4'],
-          datasets: [{ label: 'Expenses', data: weeklyTotals, backgroundColor: '#4ade80' }]
-        },
-        options: { scales: { y: { beginAtZero: true } } }
-      });
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+
+  // Group expenses by week in the current month
+  const weeklyTotals = {};
+  expenses.forEach(e => {
+    const d = new Date(e.date);
+    if (d.getMonth() === currentMonth && d.getFullYear() === currentYear) {
+      const wk = getWeekNumber(d);
+      weeklyTotals[wk] = (weeklyTotals[wk] || 0) + e.amount;
     }
+  });
+
+  const weeks = Object.keys(weeklyTotals).sort((a,b)=>a-b);
+  const totals = weeks.map(wk => weeklyTotals[wk]);
+
+  const ctx = document.getElementById('spendingChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: weeks.map(wk => `Week ${wk}`),
+      datasets: [{
+        label: 'Expenses',
+        data: totals,
+        backgroundColor: '#4ade80'
+      }]
+    },
+    options: { scales: { y: { beginAtZero: true } } }
+  });
+}
 
     // Init
     updateSummary();
@@ -159,10 +172,8 @@
     buildCalendar(now.getFullYear(), now.getMonth());
     buildWeeklyChart();
   </script>
-
 <div style="margin-top: 20px; text-align:center;">
-  <button onclick="window.location.href='expense.html'">Back to Tracker</button>
+<button onclick="window.location.href='expense.html'">Back to Tracker</button>
 </div>
-
 </body>
 </html>

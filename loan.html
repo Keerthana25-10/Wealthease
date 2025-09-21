@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Loan Manager with EMI Reminders & Rate Sensitivity</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+         background:#f7f8fb;margin:0;padding:28px;color:#111}
+    .container{display:flex;gap:20px;max-width:1200px;margin:0 auto;}
+    .left,.right{flex:1;}
+    h1{font-size:24px;margin-bottom:16px}
+    h2{font-size:20px;margin:18px 0 12px}
+    .card{background:#fff;padding:18px;border-radius:12px;
+          box-shadow:0 2px 6px rgba(2,6,23,0.06);margin-bottom:20px}
+    label{display:block;margin-top:12px;font-weight:500}
+    input,select{width:100%;padding:10px;border:1px solid #ddd;
+                 border-radius:8px;margin-top:4px}
+    button{margin-top:16px;padding:10px 16px;border:none;border-radius:8px;
+           background:#2563eb;color:#fff;font-weight:600;cursor:pointer}
+    button:hover{background:#1e4fd3}
+    .result{margin-top:18px;padding:12px;border-radius:8px;background:#f3f4f6}
+    .loan-type{padding:10px;border-radius:8px;margin-top:10px}
+    .good{background:#dcfce7;border:1px solid #86efac}
+    .medium{background:#fef9c3;border:1px solid #fde047}
+    .bad{background:#fee2e2;border:1px solid #fca5a5}
+
+    /* Slider */
+    .slider-container{margin-top:20px;}
+    .slider-container label{margin-bottom:6px;display:block;}
+    input[type=range]{width:100%;}
+
+    /* Calendar styles */
+    .calendar{background:#fff;padding:20px;border-radius:12px;
+              box-shadow:0 2px 6px rgba(2,6,23,0.06);text-align:center;}
+    .calendar header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+    .calendar table{width:100%;border-collapse:collapse;}
+    .calendar th{padding:8px;font-weight:600;color:#555;}
+    .calendar td{padding:10px;border-radius:6px;cursor:pointer;position:relative;}
+    .calendar td:hover{background:#e5e7eb}
+    .calendar .today{background:#2563eb;color:#fff;font-weight:bold;}
+    .calendar .due{background:#facc15;color:#111;font-weight:bold;}
+    .tooltip{visibility:hidden;background:#111;color:#fff;
+             text-align:center;padding:4px 8px;border-radius:6px;
+             position:absolute;z-index:1;bottom:125%;left:50%;transform:translateX(-50%);
+             white-space:nowrap;font-size:12px;}
+    .calendar td:hover .tooltip{visibility:visible;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Left Side -->
+    <div class="left">
+      <h1>Loan Eligibility & EMI Manager</h1>
+
+      <!-- Eligibility Checker -->
+      <div class="card">
+        <h2>1. Check Eligibility</h2>
+        <label for="income">Monthly Income ($)</label>
+        <input id="income" type="number" placeholder="e.g., 4000" />
+
+        <label for="expenses">Monthly Expenses ($)</label>
+        <input id="expenses" type="number" placeholder="e.g., 2200" />
+
+        <button onclick="checkEligibility()">Check Eligibility</button>
+      </div>
+      <div id="eligibilityResults"></div>
+
+      <!-- EMI Calculator -->
+      <div class="card">
+        <h2>2. Add EMI Reminder</h2>
+        <label for="loanAmount">Loan Amount ($)</label>
+        <input id="loanAmount" type="number" placeholder="e.g., 100000" />
+
+        <label for="interestRate">Annual Interest Rate (%)</label>
+        <input id="interestRate" type="number" step="0.01" placeholder="e.g., 7.5" />
+
+        <label for="loanTenure">Loan Tenure (years)</label>
+        <input id="loanTenure" type="number" placeholder="e.g., 10" />
+
+        <label for="dueDate">EMI Due Date (day of month)</label>
+        <input id="dueDate" type="number" min="1" max="28" placeholder="e.g., 5" />
+
+        <label for="reason">Reason / Loan Purpose</label>
+        <input id="reason" type="text" placeholder="e.g., Car Loan" />
+
+        <button onclick="addEMIReminder()">Add EMI Reminder</button>
+      </div>
+      <div id="emiResults"></div>
+    </div>
+
+    <!-- Right Side: Calendar + Sensitivity -->
+    <div class="right">
+      <!-- Calendar -->
+      <div class="calendar card">
+        <header>
+          <button onclick="prevMonth()">&lt;</button>
+          <div id="monthYear"></div>
+          <button onclick="nextMonth()">&gt;</button>
+        </header>
+        <table>
+          <thead>
+            <tr>
+              <th>Su</th><th>Mo</th><th>Tu</th><th>We</th>
+              <th>Th</th><th>Fr</th><th>Sa</th>
+            </tr>
+          </thead>
+          <tbody id="calendarBody"></tbody>
+        </table>
+      </div>
+
+      <!-- Interest Sensitivity -->
+      <div class="card slider-container">
+        <h2>3. Interest Rate Sensitivity</h2>
+        <label for="rateSlider">Adjust Interest Rate (±5%):</label>
+        <input id="rateSlider" type="range" min="-5" max="5" step="0.1" value="0" oninput="updateSensitivity(this.value)">
+        <div id="sensitivityResult" class="result">Move the slider to see EMI changes.</div>
+        <canvas id="sensitivityChart" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let latestDisposable = 0;
+    let reminders = [];
+    let lastLoanDetails = null;
+    let chart = null;
+
+    function formatMoney(n){ return '$' + Number(n).toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2}); }
+
+    function checkEligibility(){
+      const income = Number(document.getElementById('income').value || 0);
+      const expenses = Number(document.getElementById('expenses').value || 0);
+      const resultsDiv = document.getElementById('eligibilityResults');
+      resultsDiv.innerHTML = '';
+      if (income <= 0){ resultsDiv.innerHTML = '<div class="result bad">Please enter a valid income.</div>'; return; }
+      if (expenses < 0){ resultsDiv.innerHTML = '<div class="result bad">Please enter valid expenses.</div>'; return; }
+      const disposable = income - expenses;
+      latestDisposable = disposable;
+      const dti = (expenses / income) * 100;
+      let message = `<div class="result">
+        <strong>Summary:</strong><br/>
+        Income: ${formatMoney(income)}<br/>
+        Expenses: ${formatMoney(expenses)}<br/>
+        Disposable Income: ${formatMoney(disposable)}<br/>
+        Debt-to-Income (DTI): ${dti.toFixed(1)}%
+      </div>`;
+      resultsDiv.innerHTML = message;
+    }
+
+    function addEMIReminder(){
+      const loanAmount = Number(document.getElementById('loanAmount').value || 0);
+      const annualRate = Number(document.getElementById('interestRate').value || 0);
+      const years = Number(document.getElementById('loanTenure').value || 0);
+      const dueDate = Number(document.getElementById('dueDate').value || 0);
+      const reason = document.getElementById('reason').value.trim();
+      const resultsDiv = document.getElementById('emiResults');
+      if (loanAmount <= 0 || annualRate <= 0 || years <= 0 || dueDate < 1 || dueDate > 28 || !reason){
+        resultsDiv.innerHTML = '<div class="result bad">Please enter valid loan details and reason.</div>';
+        return;
+      }
+      const n = years * 12;
+      const r = (annualRate/100) / 12;
+      const emi = r === 0 ? loanAmount/n : (loanAmount * r * Math.pow(1+r,n)) / (Math.pow(1+r,n)-1);
+      reminders.push({amount: emi, dueDate: dueDate, reason: reason});
+      lastLoanDetails = {loanAmount, annualRate, years};
+      renderCalendar(currentMonth, currentYear);
+      let msg = `<div class="result">
+        <strong>Added EMI Reminder:</strong><br/>
+        Reason: ${reason}<br/>
+        Loan Amount: ${formatMoney(loanAmount)}<br/>
+        EMI: <strong>${formatMoney(emi.toFixed(2))}</strong><br/>
+        Due Date: Day ${dueDate} each month<br/>
+      </div>`;
+      resultsDiv.innerHTML += msg;
+      updateChart();
+    }
+
+    function updateSensitivity(change){
+      const resDiv = document.getElementById("sensitivityResult");
+      if (!lastLoanDetails){ resDiv.innerHTML = "Add a loan first to test sensitivity."; return; }
+      const {loanAmount, annualRate, years} = lastLoanDetails;
+      const newRate = annualRate + parseFloat(change);
+      const n = years * 12;
+      const r = (newRate/100) / 12;
+      const emi = r === 0 ? loanAmount/n : (loanAmount * r * Math.pow(1+r,n)) / (Math.pow(1+r,n)-1);
+      resDiv.innerHTML = `If rate changes by <strong>${change}%</strong> → New EMI: <strong>${formatMoney(emi.toFixed(2))}</strong>`;
+    }
+
+    function updateChart(){
+      if (!lastLoanDetails) return;
+      const {loanAmount, annualRate, years} = lastLoanDetails;
+      const n = years * 12;
+      let rates = [], emis = [];
+      for (let delta=-5; delta<=5; delta+=0.5){
+        let r = (annualRate+delta)/100/12;
+        let emi = r===0 ? loanAmount/n : (loanAmount * r * Math.pow(1+r,n)) / (Math.pow(1+r,n)-1);
+        rates.push((annualRate+delta).toFixed(2));
+        emis.push(emi.toFixed(2));
+      }
+      if (chart) chart.destroy();
+      chart = new Chart(document.getElementById("sensitivityChart"), {
+        type:"line",
+        data:{ labels:rates, datasets:[{label:"EMI vs Interest Rate",data:emis,borderColor:"#2563eb",fill:false,tension:0.2}] },
+        options:{ responsive:true, plugins:{legend:{display:false}},
+          scales:{ x:{title:{display:true,text:"Interest Rate (%)"}}, y:{title:{display:true,text:"EMI ($)"}} } }
+      });
+    }
+
+    let today = new Date();
+    let currentMonth = today.getMonth();
+    let currentYear = today.getFullYear();
+    const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    function renderCalendar(month, year){
+      const firstDay = new Date(year, month).getDay();
+      const daysInMonth = 32 - new Date(year, month, 32).getDate();
+      const tbl = document.getElementById("calendarBody");
+      tbl.innerHTML = "";
+      document.getElementById("monthYear").innerHTML = monthNames[month] + " " + year;
+      let date = 1;
+      for (let i = 0; i < 6; i++){
+        let row = document.createElement("tr");
+        for (let j = 0; j < 7; j++){
+          if (i === 0 && j < firstDay){ row.appendChild(document.createElement("td")); }
+          else if (date > daysInMonth){ break; }
+          else {
+            let cell = document.createElement("td");
+            cell.textContent = date;
+            if (date === today.getDate() && year === today.getFullYear() && month === today.getMonth()){ cell.classList.add("today"); }
+            reminders.forEach(r => { if (date === r.dueDate){ cell.classList.add("due"); let tooltip=document.createElement("span"); tooltip.className="tooltip"; tooltip.textContent=`${r.reason}: ${formatMoney(r.amount.toFixed(2))}`; cell.appendChild(tooltip);} });
+            row.appendChild(cell); date++;
+          }
+        }
+        tbl.appendChild(row);
+      }
+    }
+    function prevMonth(){ currentMonth = currentMonth===0?11:currentMonth-1; currentYear = currentMonth===11?currentYear-1:currentYear; renderCalendar(currentMonth, currentYear); }
+    function nextMonth(){ currentMonth = currentMonth===11?0:currentMonth+1; currentYear = currentMonth===0?currentYear+1:currentYear; renderCalendar(currentMonth, currentYear); }
+    renderCalendar(currentMonth, currentYear);
+  </script>
+</body>
+</html>

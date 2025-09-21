@@ -625,6 +625,54 @@
   updateExpensesDisplay();
   updateChart();
   updateSummary();
+
+
+ function saveLimits() {
+  const monthlyLimit = parseFloat(document.getElementById("monthlyLimit").value) || 0;
+  const weeklyLimit = parseFloat(document.getElementById("weeklyLimit").value) || 0;
+
+  localStorage.setItem("monthlyLimit", monthlyLimit);
+  localStorage.setItem("weeklyLimit", weeklyLimit);
+
+  updateLimitDisplay();
+  alert("Limits saved!");
+}
+
+function loadLimits() {
+  const monthlyLimit = parseFloat(localStorage.getItem("monthlyLimit")) || 0;
+  const weeklyLimit = parseFloat(localStorage.getItem("weeklyLimit")) || 0;
+
+  document.getElementById("monthlyLimitDisplay").textContent = monthlyLimit;
+  document.getElementById("weeklyLimitDisplay").textContent = weeklyLimit;
+}
+
+function updateLimitDisplay() {
+  loadLimits();
+
+  // Example: calculate totals
+  const monthlySpent = expenses.reduce((sum, e) => sum + e.amount, 0);
+  const weeklySpent = expenses.reduce((sum, e) => sum + e.amount, 0); // Replace with real weekly logic
+
+  document.getElementById("monthlySpent").textContent = monthlySpent.toFixed(2);
+  document.getElementById("weeklySpent").textContent = weeklySpent.toFixed(2);
+
+  const monthlyLimit = parseFloat(localStorage.getItem("monthlyLimit")) || 0;
+  const weeklyLimit = parseFloat(localStorage.getItem("weeklyLimit")) || 0;
+
+  const warning = document.getElementById("warningMsg");
+  if (monthlyLimit && monthlySpent > monthlyLimit) {
+    warning.textContent = "⚠️ Monthly limit exceeded!";
+  } else if (weeklyLimit && weeklySpent > weeklyLimit) {
+    warning.textContent = "⚠️ Weekly limit exceeded!";
+  } else {
+    warning.textContent = "";
+  }
+}
+
+// Run on page load
+loadLimits();
+updateLimitDisplay();
+ 
 </script>
 <div id="budget-section">
 <h3>Set Spending Limits</h3>
