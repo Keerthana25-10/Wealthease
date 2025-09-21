@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wealthease</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #000;
+      color: #fff;
+    }
+
+    /* Header */
+    header {
+      background: #e6dcdc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
+    }
+
+    header img {
+      height: 60px;
+      margin-right: 15px;
+    }
+
+    header h1 {
+      font-size: 32px;
+      color: #000;
+      margin: 0;
+    }
+
+    /* Navigation */
+    nav {
+      background: #2d2d2d;
+      padding: 10px 0;
+      text-align: center;
+    }
+
+    nav a {
+      color: #fff;
+      margin: 0 20px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    /* Tagline */
+    .tagline {
+      text-align: center;
+      margin: 30px 10px;
+      font-family: "Brush Script MT", cursive;
+      font-size: 28px;
+    }
+
+    /* Features */
+    .features {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin: 20px;
+    }
+
+    .card {
+      background: #e6f4f8;
+      color: #000;
+      width: 250px;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      box-shadow: 0px 3px 6px rgba(0,0,0,0.3);
+    }
+
+    .card h3 {
+      background: #fbc02d;
+      padding: 8px;
+      margin: -15px -15px 15px -15px;
+      border-radius: 10px 10px 0 0;
+      font-size: 16px;
+    }
+
+    .card img {
+      width: 100px;
+      margin: 10px auto;
+      display: block;
+    }
+
+    .card p {
+      font-size: 14px;
+    }
+
+    /* Attractive Go Button */
+    .go-btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: bold;
+      color: #fff;
+      background: #007bff;
+      border: none;
+      border-radius: 25px;
+      text-decoration: none;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .go-btn:hover {
+      background: #0056b3;
+      transform: scale(1.05);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+    }
+
+    .social-icons img {
+      width: 40px;
+      margin: 0 10px;
+      cursor: pointer;
+    }
+
+    @media(max-width: 768px) {
+      .features {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <img src="logo.jpg" alt="Wealthease Logo">
+    <h1>WEALTHEASE</h1>
+  </header>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="#">About us</a>
+    <a href="#">Get Started</a>
+  </nav>
+
+  <!-- Tagline -->
+  <div class="tagline">
+    <p>One platform for money, impact, and growth</p>
+  </div>
+
+  <!-- Features -->
+  <section class="features">
+    <div class="card">
+      <h3>Smart Expense Tracker</h3>
+      <img src="smart.jpg" alt="Expense Tracker">
+      <p>Track every month, grow every month</p>
+      <a href="expense.html" class="go-btn">Go</a>
+    </div>
+    <div class="card">
+      <h3>Crowdfunding</h3>
+      <img src="crowdfunding.jpeg" alt="Crowdfunding">
+      <p>Funding hope, fueling change</p>
+      <a href="crowdfunding.html" class="go-btn">Go</a>
+    </div>
+    <div class="card">
+      <h3>Loan Assistance</h3>
+      <img src="loan.jpeg" alt="Loan Assistance">
+      <p>From confusion to clarity in credit</p>
+      <a href="loan.html" class="go-btn">Go</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>Connect with us:</p>
+    <div class="social-icons">
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook">
+      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733579.png" alt="Twitter">
+    </div>
+  </footer>
+</body>
+</html>
+
