@@ -1,253 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WealthEase - Auth</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #111;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      color: white;
+<script>
+  function showLogin() {
+    document.getElementById("signupForm").classList.add("hidden");
+    document.getElementById("loginForm").classList.remove("hidden");
+  }
+
+  function showSignup() {
+    document.getElementById("loginForm").classList.add("hidden");
+    document.getElementById("signupForm").classList.remove("hidden");
+  }
+
+  function signup(event) {
+    event.preventDefault();
+    const username = document.getElementById("signup-username").value;
+    const email = document.getElementById("signup-email").value;
+    const password = document.getElementById("signup-password").value;
+
+    // Save user data in localStorage
+    const user = { username, email, password };
+    localStorage.setItem("user", JSON.stringify(user));
+
+    // Redirect to home page
+    window.location.href = "home.html";
+  }
+
+  function login(event) {
+    event.preventDefault();
+    const username = document.getElementById("login-username").value;
+    const password = document.getElementById("login-password").value;
+
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+
+    if (storedUser && storedUser.username === username && storedUser.password === password) {
+      // Redirect to home page
+      window.location.href = "home.html";
+    } else {
+      alert("❌ Invalid login. Try again.");
     }
+  }
+</script>
 
-    .container {
-      background-color: #dcdcdc;
-      padding: 30px;
-      border-radius: 8px;
-      width: 400px;
-      box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
-      text-align: center;
-      color: black;
-    }
-
-    .container h1 {
-      margin-bottom: 10px;
-      font-size: 2rem;
-      font-weight: bold;
-    }
-
-    .form-box {
-      background-color: #bfbfbf;
-      padding: 20px;
-      border-radius: 4px;
-      text-align: left;
-    }
-
-    .form-box h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      font-size: 1.2rem;
-    }
-
-    label {
-      display: block;
-      font-weight: bold;
-      margin: 15px 0 5px;
-    }
-
-    input {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 20px;
-      margin-bottom: 10px;
-      font-size: 1rem;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 20px;
-      background-color: #333;
-      color: white;
-      font-size: 1rem;
-      cursor: pointer;
-      margin-top: 10px;
-      transition: background-color 0.3s ease;
-    }
-
-    button:hover {
-      background-color: #555;
-    }
-
-    .toggle-link {
-      margin-top: 15px;
-      text-align: center;
-      font-weight: bold;
-    }
-
-    .toggle-link a {
-      color: black;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    .toggle-link a:hover {
-      text-decoration: underline;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    /* Dashboard styling */
-    #dashboard {
-      display: none;
-      width: 100%;
-      height: 100vh;
-      background-color: black;
-      color: white;
-      padding: 20px;
-      position: relative;
-    }
-
-    .account-info {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      text-align: right;
-    }
-
-    .account-info h3 {
-      margin: 0;
-    }
-
-    .logout-btn {
-      margin-top: 10px;
-      padding: 8px 16px;
-      border: none;
-      border-radius: 8px;
-      background-color: red;
-      color: white;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    .logout-btn:hover {
-      background-color: darkred;
-    }
-  </style>
-</head>
-<body>
-
-  <!-- Auth Container -->
-  <div class="container" id="authBox">
-    <h1>WealthEase</h1>
-
-    <!-- Sign Up Form -->
-    <div class="form-box" id="signupForm">
-      <h2>SIGN UP</h2>
-      <form onsubmit="signup(event)">
-        <label for="signup-username">USERNAME</label>
-        <input type="text" id="signup-username" placeholder="Enter your username" required>
-
-        <label for="signup-password">PASSWORD</label>
-        <input type="password" id="signup-password" placeholder="Enter the password" required>
-
-        <label for="signup-email">EMAIL ID</label>
-        <input type="email" id="signup-email" placeholder="Enter your email id" required>
-
-        <button type="submit">Create Account</button>
-      </form>
-      <div class="toggle-link">
-        <a onclick="showLogin()">SIGN IN INSTEAD</a>
-      </div>
-    </div>
-
-    <!-- Sign In Form -->
-    <div class="form-box hidden" id="loginForm">
-      <h2>SIGN IN</h2>
-      <form onsubmit="login(event)">
-        <label for="login-username">USERNAME</label>
-        <input type="text" id="login-username" placeholder="Enter your username" required>
-
-        <label for="login-password">PASSWORD</label>
-        <input type="password" id="login-password" placeholder="Enter the password" required>
-
-        <button type="submit">SUBMIT</button>
-      </form>
-      <div class="toggle-link">
-        <a onclick="showSignup()">SIGN UP INSTEAD</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- Dashboard -->
-  <div id="dashboard">
-    <div class="account-info">
-      <h3 id="accountName"></h3>
-      <p id="accountEmail"></p>
-      <button class="logout-btn" onclick="logout()">Log Out</button>
-    </div>
-    <h1>Welcome to WealthEase Dashboard</h1>
-    <p>Here you can manage your expenses, crowdfunding, and loan assistance.</p>
-  </div>
-
-  <script>
-    let userData = {};
-
-    function showLogin() {
-      document.getElementById("signupForm").classList.add("hidden");
-      document.getElementById("loginForm").classList.remove("hidden");
-    }
-
-    function showSignup() {
-      document.getElementById("loginForm").classList.add("hidden");
-      document.getElementById("signupForm").classList.remove("hidden");
-    }
-
-    function signup(event) {
-      event.preventDefault();
-      // Save user data temporarily (simulate account creation)
-      userData.username = document.getElementById("signup-username").value;
-      userData.email = document.getElementById("signup-email").value;
-
-      // Go directly to dashboard
-      document.getElementById("authBox").style.display = "none";
-      document.getElementById("dashboard").style.display = "block";
-
-      // Display account info
-      document.getElementById("accountName").innerText = "👤 " + userData.username;
-      document.getElementById("accountEmail").innerText = "📧 " + userData.email;
-    }
-
-    function login(event) {
-      event.preventDefault();
-      const username = document.getElementById("login-username").value;
-      const password = document.getElementById("login-password").value;
-
-      // Simple check (simulate authentication)
-      if (username === userData.username && password !== "") {
-        document.getElementById("authBox").style.display = "none";
-        document.getElementById("dashboard").style.display = "block";
-
-        // Display account info
-        document.getElementById("accountName").innerText = "👤 " + userData.username;
-        document.getElementById("accountEmail").innerText = "📧 " + userData.email;
-      } else {
-        alert("❌ Invalid login. Try again.");
-      }
-    }
-
-    function logout() {
-      // Clear fields
-      document.getElementById("login-username").value = "";
-      document.getElementById("login-password").value = "";
-
-      // Show login/signup page again
-      document.getElementById("dashboard").style.display = "none";
-      document.getElementById("authBox").style.display = "block";
-      showLogin();
-    }
-  </script>
-
-</body>
-</html>

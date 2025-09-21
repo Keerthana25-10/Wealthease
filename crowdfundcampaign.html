@@ -60,6 +60,35 @@
       width: 100%;
       margin-top: 10px;
     }
+
+    /* Title + Arrow button layout */
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Arrow button style */
+    .arrow-btn {
+      background: #2dd4bf;
+      border: none;
+      color: #000;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .arrow-btn:hover {
+      background: #14b8a6;
+      transform: scale(1.1);
+    }
+
     /* Modal styles */
     .modal {
       display: none;
@@ -104,7 +133,10 @@
     <div class="card">
       <img src="comm_plantationdrive.jpg" alt="Community Plantation">
       <div class="card-content">
-        <h2>Community Plantation Drives</h2>
+        <div class="card-header">
+          <h2>Community Plantation Drives</h2>
+          <button class="arrow-btn" onclick="window.location.href='campaign.html'">➜</button>
+        </div>
         <p>This is a campaign to bring together local residents, volunteers, 
         and donors to plant and maintain trees in urban and rural areas. 
         The goal is not just planting saplings, but ensuring their survival 
@@ -116,7 +148,10 @@
     <div class="card">
       <img src="lib.png" alt="Community Library">
       <div class="card-content">
-        <h2>Community Library</h2>
+        <div class="card-header">
+          <h2>Community Library</h2>
+          <button class="arrow-btn" onclick="window.location.href='campaign.html'">➜</button>
+        </div>
         <p>It aims to create an accessible learning space where children, women, and youth can
              read, learn, and grow together. It provides books, digital resources, and a safe 
              study environment for communities with limited access to educational materials.</p>
@@ -160,6 +195,41 @@
       openModal("qrModal");
     }
 
+    // Save campaigns to localStorage
+    function saveCampaigns(campaigns) {
+      localStorage.setItem("campaigns", JSON.stringify(campaigns));
+    }
+
+    // Load campaigns from localStorage
+    function loadCampaigns() {
+      const data = localStorage.getItem("campaigns");
+      return data ? JSON.parse(data) : [];
+    }
+
+    function displayCampaigns() {
+      const campaignsGrid = document.getElementById("campaignsGrid");
+      campaignsGrid.querySelectorAll(".dynamic-card").forEach(el => el.remove());
+
+      const campaigns = loadCampaigns();
+      campaigns.forEach((c, i) => {
+        const card = document.createElement("div");
+        card.classList.add("card", "dynamic-card");
+        card.innerHTML = `
+          <img src="${c.img}" alt="${c.title}">
+          <div class="card-content">
+            <div class="card-header">
+              <h2>${c.title}</h2>
+              <button class="arrow-btn" onclick="window.location.href='campaign.html'">➜</button>
+            </div>
+            <p>${c.desc}</p>
+            <button class="btn btn-donate" onclick="openQRModal('${c.qr}')">DONATE</button>
+            <button class="btn btn-delete" onclick="deleteCampaign(${i})">DELETE</button>
+          </div>
+        `;
+        campaignsGrid.appendChild(card);
+      });
+    }
+
     function addCampaign() {
       const title = document.getElementById("campaignTitle").value;
       const desc = document.getElementById("campaignDesc").value;
@@ -179,25 +249,30 @@
         readerQR.onload = function(e2) {
           const qrSrc = e2.target.result;
 
-          const card = document.createElement("div");
-          card.classList.add("card");
-          card.innerHTML = `
-            <img src="${imgSrc}" alt="${title}">
-            <div class="card-content">
-              <h2>${title}</h2>
-              <p>${desc}</p>
-              <button class="btn btn-donate" onclick="openQRModal('${qrSrc}')">DONATE</button>
-              <button class="btn btn-delete" onclick="this.closest('.card').remove()">DELETE</button>
-            </div>
-          `;
-          document.getElementById("campaignsGrid").appendChild(card);
+          const campaigns = loadCampaigns();
+          campaigns.push({ title, desc, img: imgSrc, qr: qrSrc });
+          saveCampaigns(campaigns);
+          displayCampaigns();
         };
         readerQR.readAsDataURL(qrFile);
       };
       readerImage.readAsDataURL(imageFile);
 
       closeModal("createModal");
+      document.getElementById("campaignTitle").value = "";
+      document.getElementById("campaignDesc").value = "";
+      document.getElementById("campaignImage").value = "";
+      document.getElementById("qrUpload").value = "";
     }
+
+    function deleteCampaign(index) {
+      const campaigns = loadCampaigns();
+      campaigns.splice(index, 1);
+      saveCampaigns(campaigns);
+      displayCampaigns();
+    }
+
+    window.onload = displayCampaigns;
   </script>
 </body>
 </html>

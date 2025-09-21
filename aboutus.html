@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WealthEase</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #000;   /* Black background */
+      color: #fff;        /* Default text color */
+      line-height: 1.6;
+    }
+
+    /* Header */
+    header {
+      background: #111;
+      color: #ffcc00;
+      padding: 20px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    header img {
+      height: 70px;
+      width: 70px;
+      border-radius: 50%;
+      background: #fff;
+      padding: 5px;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+      color: #ffcc00;
+    }
+    header p {
+      margin: 0;
+      font-size: 14px;
+      color: #ddd;
+    }
+
+    /* Navbar */
+    nav {
+      background: #28a745;
+      display: flex;
+      justify-content: center;
+      padding: 12px;
+    }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 20px;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+    nav a:hover {
+      color: #ffcc00;
+    }
+
+    /* Sections (cards) */
+    section {
+      padding: 20px;
+      background: #fff;
+      color: #000;
+      margin: 20px auto;
+      width: 90%;
+      max-width: 900px;
+      border-radius: 12px;
+      box-shadow: 0px 4px 12px rgba(255,255,255,0.1);
+      transition: transform 0.2s;
+    }
+    section:hover {
+      transform: scale(1.01);
+    }
+    section h2 {
+      color: #28a745;
+      cursor: pointer;
+      border-bottom: 2px solid #28a745;
+      padding-bottom: 5px;
+      transition: color 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    section h2:hover {
+      color: #1e7e34;
+    }
+    .content {
+      display: none;
+      margin-top: 12px;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    ul, ol {
+      margin: 10px 0;
+      padding-left: 20px;
+    }
+
+    /* Loan Calculator */
+    .calc-box {
+      background: #f1fdf4;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .calc-box input {
+      padding: 8px;
+      margin: 5px;
+      width: 100px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .calc-box button {
+      padding: 8px 15px;
+      background: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .calc-box button:hover {
+      background: #1e7e34;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 15px;
+      background: #111;
+      color: #ffcc00;
+      margin-top: 30px;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <img src="logo.jpg" alt="WealthEase Logo">
+    <div>
+      <h1>WealthEase</h1>
+      <p>ONE PLATFORM FOR MONEY, IMPACT AND GROWTH</p>
+    </div>
+  </header>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="#loans">💰 Loans</a>
+    <a href="#expenses">📊 Expense Tracker</a>
+    <a href="#crowdfunding">🤝 Crowdfunding</a>
+  </nav>
+
+  <!-- Loans -->
+  <section id="loans">
+    <h2 onclick="toggleContent(this)">💰 Loan Application Features</h2>
+    <div class="content">
+      <ol>
+        <li>
+          <strong>Loan Eligibility Checker</strong>
+          <ul>
+            <li>Quick form to check basic eligibility (age, income, ID, credit score).</li>
+            <li>Shows estimated loan amount and interest range.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Guided Application Wizard</strong>
+          <ul>
+            <li>Step-by-step form to apply for loans.</li>
+            <li>Upload KYC documents (ID, address, income proof).</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Loan Comparison & Education</strong>
+          <ul>
+            <li>Explain different loan types (personal, education, business, emergency).</li>
+            <li>Show interest rates, EMI calculators, and repayment timelines.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Approval Tracker</strong>
+          <ul>
+            <li>Dashboard to track status of submitted loan applications.</li>
+            <li>Notifications for document verification, approval, disbursal.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Repayment Management</strong>
+          <ul>
+            <li>EMI reminders and payment links.</li>
+            <li>Repayment history and schedule.</li>
+          </ul>
+        </li>
+      </ol>
+
+      <!-- Loan Calculator -->
+      <div class="calc-box">
+        <h3>Loan EMI Calculator</h3>
+        <input type="number" id="loanAmount" placeholder="Amount ₹">
+        <input type="number" id="loanRate" placeholder="Rate %">
+        <input type="number" id="loanYears" placeholder="Years">
+        <button onclick="calcLoan()">Calculate</button>
+        <p id="loanResult"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Expense Tracker -->
+  <section id="expenses">
+    <h2 onclick="toggleContent(this)">📊 Smart Expense Tracker</h2>
+    <div class="content">
+      <ol>
+        <li>
+          <strong>Add & Categorize Expenses</strong>
+          <ul>
+            <li>Manual entry of daily spending (amount, date, category, payment mode).</li>
+            <li>Categories like Food, Transport, Bills, Education, Health, Entertainment, etc.</li>
+            <li>Tag as personal / business if needed.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Income Tracking</strong>
+          <ul>
+            <li>Add salary, pocket money, side income, loans received, donations, etc.</li>
+            <li>View balance: Income – Expenses.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Smart Budgeting</strong>
+          <ul>
+            <li>Set monthly/weekly spending limits.</li>
+            <li>Show remaining budget in each category.</li>
+            <li>Alerts when nearing the limit.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Visual Analytics</strong>
+          <ul>
+            <li>Pie charts (category-wise spending).</li>
+            <li>Bar graphs (monthly trends).</li>
+            <li>Weekly/monthly summary reports.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Recurring Payments Reminders</strong>
+          <ul>
+            <li>Track rent, EMIs, subscriptions.</li>
+            <li>Notifications for upcoming bills.</li>
+          </ul>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Crowdfunding -->
+  <section id="crowdfunding">
+    <h2 onclick="toggleContent(this)">🤝 Crowdfund Raising</h2>
+    <div class="content">
+      <ol>
+        <li>
+          <strong>Easy Campaign Setup Wizard</strong>
+          <ul>
+            <li>Step-by-step procedure to create a fundraising campaign.</li>
+            <li>Upload images, videos, and documents for authenticity.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Category Selection</strong>
+          <ul>
+            <li>Categories like Women Empowerment, Education, Health, Environment, Rural Development, Disaster Relief, etc.</li>
+            <li>Helps donors filter and discover campaigns.</li>
+          </ul>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 WealthEase | All Rights Reserved</p>
+  </footer>
+
+  <script>
+    // Collapsible Sections
+    function toggleContent(el) {
+      const content = el.nextElementSibling;
+      content.style.display = content.style.display === "block" ? "none" : "block";
+    }
+
+    // Loan Calculator
+    function calcLoan() {
+      const P = parseFloat(document.getElementById("loanAmount").value);
+      const r = parseFloat(document.getElementById("loanRate").value) / 100 / 12;
+      const n = parseFloat(document.getElementById("loanYears").value) * 12;
+
+      if (isNaN(P) || isNaN(r) || isNaN(n)) {
+        document.getElementById("loanResult").innerText = "Please fill all fields.";
+        return;
+      }
+
+      const emi = (P * r * Math.pow(1+r, n)) / (Math.pow(1+r, n) - 1);
+      document.getElementById("loanResult").innerText = `Your EMI is ₹${emi.toFixed(2)}`;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wealthease</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #000;
+      color: #fff;
+    }
+
+    /* Header */
+    header {
+      background: #e6dcdc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
+      position: relative;
+    }
+
+    header img {
+      height: 60px;
+      margin-right: 15px;
+    }
+
+    header h1 {
+      font-size: 32px;
+      color: #000;
+      margin: 0;
+    }
+
+    /* Profile Info (top-right) */
+    .profile-info {
+      position: absolute;
+      right: 20px;
+      top: 10px;
+      text-align: right;
+      color: #000;
+    }
+
+    .profile-info h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .profile-info p {
+      margin: 2px 0;
+      font-size: 14px;
+    }
+
+    .logout-btn {
+      margin-top: 5px;
+      padding: 6px 14px;
+      border: none;
+      border-radius: 8px;
+      background-color: red;
+      color: white;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .logout-btn:hover {
+      background-color: darkred;
+    }
+
+    /* Navigation */
+    nav {
+      background: #2d2d2d;
+      padding: 10px 0;
+      text-align: center;
+    }
+
+    nav a {
+      color: #fff;
+      margin: 0 20px;
+      font-weight: bold;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    /* Tagline */
+    .tagline {
+      text-align: center;
+      margin: 30px 10px 10px;
+      font-family: "Brush Script MT", cursive;
+      font-size: 28px;
+    }
+
+    /* Welcome Greeting */
+    .welcome {
+      text-align: center;
+      font-size: 20px;
+      margin-bottom: 20px;
+      font-weight: bold;
+      color: #fbc02d;
+    }
+
+    /* Features */
+    .features {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin: 20px;
+    }
+
+    .card {
+      background: #e6f4f8;
+      color: #000;
+      width: 250px;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      box-shadow: 0px 3px 6px rgba(0,0,0,0.3);
+    }
+
+    .card h3 {
+      background: #fbc02d;
+      padding: 8px;
+      margin: -15px -15px 15px -15px;
+      border-radius: 10px 10px 0 0;
+      font-size: 16px;
+    }
+
+    .card img {
+      width: 100px;
+      margin: 10px auto;
+      display: block;
+    }
+
+    .card p {
+      font-size: 14px;
+    }
+
+    /* Attractive Go Button */
+    .go-btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: bold;
+      color: #fff;
+      background: #007bff;
+      border: none;
+      border-radius: 25px;
+      text-decoration: none;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .go-btn:hover {
+      background: #0056b3;
+      transform: scale(1.05);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+    }
+
+    .social-icons img {
+      width: 40px;
+      margin: 0 10px;
+      cursor: pointer;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #dcdcdc;
+      color: black;
+      padding: 20px;
+      border-radius: 8px;
+      width: 350px;
+      text-align: center;
+    }
+
+    .modal-content h2 {
+      margin-bottom: 15px;
+    }
+
+    .modal-content label {
+      display: block;
+      text-align: left;
+      margin: 10px 0 5px;
+      font-weight: bold;
+    }
+
+    .modal-content input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      margin-bottom: 10px;
+    }
+
+    .modal-content button {
+      width: 100%;
+      padding: 10px;
+      background: #333;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .modal-content button:hover {
+      background: #555;
+    }
+
+    .toggle-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .toggle-link a {
+      color: blue;
+      cursor: pointer;
+    }
+
+    .msg {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+
+    .close-btn {
+      margin-top: 10px;
+      background: red;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <img src="logo.jpg" alt="Wealthease Logo">
+    <h1>WEALTHEASE</h1>
+    <div class="profile-info" id="profileInfo" style="display:none;">
+      <h3 id="accountName"></h3>
+      <p id="accountEmail"></p>
+      <button class="logout-btn" onclick="logout()">Log Out</button>
+    </div>
+  </header>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="aboutus.html">About us</a>
+    <a onclick="openModal()">Get Started</a>
+  </nav>
+
+  <!-- Tagline -->
+  <div class="tagline">
+    <p>One platform for money, impact, and growth</p>
+  </div>
+
+  <!-- Welcome Greeting -->
+  <div class="welcome" id="welcomeMsg"></div>
+
+  <!-- Features -->
+  <section class="features">
+    <div class="card">
+      <h3>Smart Expense Tracker</h3>
+      <img src="smart.jpg" alt="Expense Tracker">
+      <p>Track every month, grow every month</p>
+      <a href="expense.html" class="go-btn">Go</a>
+    </div>
+    <div class="card">
+      <h3>Crowdfunding</h3>
+      <img src="crowdfunding.jpeg" alt="Crowdfunding">
+      <p>Funding hope, fueling change</p>
+      <a href="crowdfundcampaign.html" class="go-btn">Go</a>
+    </div>
+    <div class="card">
+      <h3>Loan Assistance</h3>
+      <img src="loan.jpeg" alt="Loan Assistance">
+      <p>From confusion to clarity in credit</p>
+      <a href="loan.html" class="go-btn">Go</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>Connect with us:</p>
+    <div class="social-icons">
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook">
+      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733579.png" alt="Twitter">
+    </div>
+  </footer>
+
+  <!-- Login/Signup Modal -->
+  <div class="modal" id="authModal">
+    <div class="modal-content">
+      <h2 id="modalTitle">Sign Up</h2>
+      <form id="authForm" onsubmit="handleAuth(event)">
+        <label for="username">Username</label>
+        <input type="text" id="username" required>
+
+        <div id="emailWrapper">
+          <label for="email">Email</label>
+          <input type="email" id="email">
+        </div>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" required>
+
+        <button type="submit">Submit</button>
+        <button type="button" class="close-btn" onclick="closeModal()">Cancel</button>
+      </form>
+      <div class="toggle-link">
+        <span id="toggleText">Already have an account? <a onclick="switchMode('signin')">Sign In</a></span>
+      </div>
+      <div class="msg" id="msg"></div>
+    </div>
+  </div>
+
+  <script>
+    let mode = "signup"; // default mode
+
+    function openModal() {
+      document.getElementById("authModal").style.display = "flex";
+    }
+
+    function closeModal() {
+      document.getElementById("authModal").style.display = "none";
+      document.getElementById("msg").innerText = "";
+    }
+
+    function switchMode(newMode) {
+      mode = newMode;
+      document.getElementById("msg").innerText = "";
+      if (mode === "signup") {
+        document.getElementById("modalTitle").innerText = "Sign Up";
+        document.getElementById("emailWrapper").style.display = "block";
+        document.getElementById("toggleText").innerHTML =
+          'Already have an account? <a onclick="switchMode(\'signin\')">Sign In</a>';
+      } else {
+        document.getElementById("modalTitle").innerText = "Sign In";
+        document.getElementById("emailWrapper").style.display = "none";
+        document.getElementById("toggleText").innerHTML =
+          'Don\'t have an account? <a onclick="switchMode(\'signup\')">Sign Up</a>';
+      }
+    }
+
+    // ✅ Multiple Accounts + Remember Logged In User
+    function handleAuth(event) {
+      event.preventDefault();
+      const username = document.getElementById("username").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      let users = JSON.parse(localStorage.getItem("users")) || [];
+
+      if (mode === "signup") {
+        if (users.some(u => u.username === username)) {
+          document.getElementById("msg").style.color = "red";
+          document.getElementById("msg").innerText = "⚠️ Username already taken. Try another.";
+          return;
+        }
+
+        const newUser = { username, email, password };
+        users.push(newUser);
+        localStorage.setItem("users", JSON.stringify(users));
+        localStorage.setItem("currentUser", JSON.stringify(newUser)); // store active user
+
+        document.getElementById("msg").style.color = "green";
+        document.getElementById("msg").innerText = "🎉 Account created successfully!";
+        updateProfile(username, email);
+        showWelcome(username);
+        setTimeout(closeModal, 1500);
+      } else {
+        let user = users.find(u => u.username === username && u.password === password);
+
+        if (user) {
+          localStorage.setItem("currentUser", JSON.stringify(user)); // store active user
+          document.getElementById("msg").style.color = "green";
+          document.getElementById("msg").innerText = "✅ Welcome back!";
+          updateProfile(user.username, user.email);
+          showWelcome(user.username);
+          setTimeout(closeModal, 1500);
+        } else {
+          document.getElementById("msg").style.color = "red";
+          document.getElementById("msg").innerText = "❌ Invalid username or password.";
+        }
+      }
+    }
+
+    function updateProfile(username, email) {
+      document.getElementById("accountName").innerText = "👤 " + username;
+      document.getElementById("accountEmail").innerText = "📧 " + email;
+      document.getElementById("profileInfo").style.display = "block";
+    }
+
+    function showWelcome(username) {
+      document.getElementById("welcomeMsg").innerText = "👋 Welcome, " + username + "!";
+    }
+
+    function logout() {
+      localStorage.removeItem("currentUser");
+      document.getElementById("profileInfo").style.display = "none";
+      document.getElementById("welcomeMsg").innerText = "";
+    }
+
+    // Auto-load only the currently logged in user
+    window.onload = () => {
+      let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+      if (currentUser) {
+        updateProfile(currentUser.username, currentUser.email);
+        showWelcome(currentUser.username);
+      }
+    };
+  </script>
+</body>
+</html>

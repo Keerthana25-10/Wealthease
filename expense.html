@@ -1,11 +1,16 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Smart Expense Tracker</title>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Smart Expense Tracker</title>
+<style>
     @import url('https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap');
+
+    #budget-section h3 {
+  color: white;
+}
 
     body {
       margin: 0;
@@ -31,6 +36,7 @@
     }
 
     header h1 {
+      font-family: 'Didact Gothic', sans-serif;
       font-weight: 400;
       font-size: 2rem;
       letter-spacing: 3px;
@@ -75,7 +81,9 @@
       font-weight: 600;
     }
 
-    #add-expense input,
+    #add-expense input[type="text"],
+    #add-expense input[type="number"],
+    #add-expense input[type="date"],
     #add-expense select {
       width: 100%;
       padding: 7px 10px;
@@ -116,23 +124,13 @@
       text-align: center;
       margin-bottom: 10px;
       font-weight: 600;
-    }
-
-    .date-group {
-      margin-bottom: 15px;
-    }
-
-    .date-heading {
-      font-weight: 700;
-      margin-bottom: 8px;
-      font-size: 1rem;
-      color: #333;
+      user-select: none;
     }
 
     .expense-item {
       background: white;
-      margin-bottom: 6px;
-      padding: 6px 10px;
+      margin-bottom: 8px;
+      padding: 8px 10px;
       border-radius: 5px;
       display: flex;
       justify-content: space-between;
@@ -142,18 +140,21 @@
 
     .expense-info {
       flex-grow: 1;
+      font-weight: 500;
       font-size: 0.9rem;
+      user-select: none;
       overflow-wrap: anywhere;
     }
 
     .expense-actions button {
-      margin-left: 5px;
+      margin-left: 8px;
       background: #ea93ff;
       border: none;
-      padding: 4px 8px;
+      padding: 5px 8px;
       border-radius: 4px;
       cursor: pointer;
       color: white;
+      font-weight: 600;
       font-size: 0.8rem;
       transition: background-color 0.3s ease;
     }
@@ -180,6 +181,7 @@
       border-radius: 8px;
       width: 320px;
       box-sizing: border-box;
+      box-shadow: 0 0 15px rgba(0,0,0,0.4);
     }
 
     #modal-content label {
@@ -188,7 +190,9 @@
       font-weight: 600;
     }
 
-    #modal-content input,
+    #modal-content input[type="text"],
+    #modal-content input[type="number"],
+    #modal-content input[type="date"],
     #modal-content select {
       width: 100%;
       padding: 7px 10px;
@@ -196,6 +200,8 @@
       border: none;
       border-radius: 5px;
       background-color: #d3d3d3;
+      font-size: 1rem;
+      box-sizing: border-box;
     }
 
     #modal-buttons {
@@ -210,11 +216,13 @@
       border-radius: 5px;
       cursor: pointer;
       font-weight: 600;
+      font-size: 1rem;
     }
 
     #modal-save {
       background-color: #5aab61;
       color: white;
+      transition: background-color 0.3s ease;
     }
 
     #modal-save:hover {
@@ -224,13 +232,14 @@
     #modal-cancel {
       background-color: #ea93ff;
       color: white;
+      transition: background-color 0.3s ease;
     }
 
     #modal-cancel:hover {
       background-color: #c168cc;
     }
 
-    /* Summary */
+    /* Summary section */
     #currency-summary {
       margin-top: 15px;
       padding: 10px;
@@ -239,107 +248,192 @@
       font-weight: 600;
       font-size: 1rem;
       line-height: 1.6;
+      text-align: center;
     }
-  </style>
+  
+
+  /* Budget Section Buttons */
+  #budget-section button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+  }
+
+  /* Save button (Monthly/Weekly limit) */
+  #budget-section button:nth-of-type(1) {
+    background: linear-gradient(135deg, #6dd5ed, #2193b0);
+    color: white;
+  }
+  #budget-section button:nth-of-type(1):hover {
+    background: linear-gradient(135deg, #2193b0, #6dd5ed);
+    transform: scale(1.05);
+  }
+
+  /* Summary button */
+  #budget-section div button {
+    background: linear-gradient(135deg, #ff9966, #ff5e62);
+    color: white;
+  }
+  #budget-section div button:hover {
+    background: linear-gradient(135deg, #ff5e62, #ff9966);
+    transform: scale(1.05);
+  }
+
+
+/* Modernized select dropdown */
+#add-expense select,
+#modal-content select,
+#budget-section select {
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #fdfbfb, #ebedee);
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  appearance: none;
+  cursor: pointer;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+/* Hover and focus effects */
+#add-expense select:hover,
+#modal-content select:hover,
+#budget-section select:hover,
+#add-expense select:focus,
+#modal-content select:focus,
+#budget-section select:focus {
+  background: linear-gradient(135deg, #dfe9f3, #ffffff);
+  outline: none;
+  transform: scale(1.02);
+}
+
+/* Option styling */
+#add-expense select option,
+#modal-content select option,
+#budget-section select option {
+  padding: 10px;
+  font-size: 1rem;
+  background: #fff;
+  color: #333;
+}
+
+
+/* Monthly & Weekly Limit Inputs */
+#budget-section input[type="number"] {
+  width: 100%;
+  max-width: 250px;
+  padding: 10px 14px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #ffffff, #f2f2f2);
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+/* Hover & Focus */
+#budget-section input[type="number"]:hover,
+#budget-section input[type="number"]:focus {
+  background: linear-gradient(135deg, #dfe9f3, #ffffff);
+  outline: none;
+  transform: scale(1.02);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+</style>
 </head>
 <body>
-
 <header>
-  <h1>SMART EXPENSE TRACKER</h1>
-  <img src="https://cdn-icons-png.flaticon.com/512/2838/2838912.png" alt="expense icon" />
+<h1>SMART EXPENSE TRACKER</h1>
+<img alt="expense icon" src="https://cdn-icons-png.flaticon.com/512/2838/2838912.png"/>
 </header>
-
 <main>
-  <section>
-    <div id="add-expense">
-      <label for="expense-name">Expense Name:</label>
-      <input type="text" id="expense-name" placeholder="e.g., Food" />
-
-      <label for="expense-amount">Amount:</label>
-      <input type="number" id="expense-amount" placeholder="e.g., 25" min="0" step="0.01" />
-
-      <label for="expense-category">Category:</label>
-      <select id="expense-category">
-        <option value="Food">Food</option>
-        <option value="Transport">Transport</option>
-        <option value="Entertainment">Entertainment</option>
-        <option value="Bills">Bills</option>
-        <option value="Other">Other</option>
-      </select>
-
-      <label for="expense-date">Date:</label>
-      <input type="date" id="expense-date" />
-
-      <label for="expense-currency">Currency:</label>
-      <select id="expense-currency">
-        <option value="USD">USD ($)</option>
-        <option value="EUR">EUR (€)</option>
-        <option value="GBP">GBP (£)</option>
-        <option value="INR">INR (₹)</option>
-        <option value="JPY">JPY (¥)</option>
-      </select>
-
-      <button id="add-expense-btn">ADD EXPENSE</button>
-    </div>
-
-    <div id="daily-expenses">
-      <div id="daily-expenses-title">DAILY EXPENSES:</div>
-      <div id="expenses-list"></div>
-    </div>
-  </section>
-
-  <section id="chart-container">
-    <div id="chart-title">Expense Distribution</div>
-    <canvas id="expense-chart"></canvas>
-    <div id="currency-summary"></div>
-  </section>
+<section>
+<div id="add-expense">
+<label for="expense-name">Expense Name:</label>
+<input id="expense-name" placeholder="e.g., Food" type="text"/>
+<label for="expense-amount">Amount:</label>
+<input id="expense-amount" min="0" placeholder="e.g., 25" step="0.01" type="number"/>
+<label for="expense-category">Category:</label>
+<select id="expense-category">
+<option value="Food">Food</option>
+<option value="Transport">Transport</option>
+<option value="Entertainment">Entertainment</option>
+<option value="Bills">Bills</option>
+<option value="Other">Other</option>
+</select>
+<label for="expense-date">Date:</label>
+<input id="expense-date" type="date"/>
+<label for="currency">Currency:</label>
+<select id="currency">
+<option selected="" value="USD">USD ($)</option>
+<option value="EUR">EUR (€)</option>
+<option value="GBP">GBP (£)</option>
+<option value="INR">INR (₹)</option>
+<option value="JPY">JPY (¥)</option>
+</select>
+<button id="add-expense-btn">ADD EXPENSE</button>
+</div>
+<div id="daily-expenses">
+<div id="daily-expenses-title">DAILY EXPENSES:</div>
+<div id="expenses-list"></div>
+</div>
+</section>
+<section id="chart-container">
+<div id="chart-title">Expense Distribution</div>
+<canvas id="expense-chart"></canvas>
+<div id="currency-summary">No expenses yet.</div>
+</section>
 </main>
-
 <!-- Edit Modal -->
 <div id="modal">
-  <div id="modal-content">
-    <h3>Edit Expense</h3>
-    <label for="edit-expense-name">Expense Name:</label>
-    <input type="text" id="edit-expense-name" />
-
-    <label for="edit-expense-amount">Amount:</label>
-    <input type="number" id="edit-expense-amount" min="0" step="0.01" />
-
-    <label for="edit-expense-category">Category:</label>
-    <select id="edit-expense-category">
-      <option value="Food">Food</option>
-      <option value="Transport">Transport</option>
-      <option value="Entertainment">Entertainment</option>
-      <option value="Bills">Bills</option>
-      <option value="Other">Other</option>
-    </select>
-
-    <label for="edit-expense-date">Date:</label>
-    <input type="date" id="edit-expense-date" />
-
-    <label for="edit-expense-currency">Currency:</label>
-    <select id="edit-expense-currency">
-      <option value="USD">USD ($)</option>
-      <option value="EUR">EUR (€)</option>
-      <option value="GBP">GBP (£)</option>
-      <option value="INR">INR (₹)</option>
-      <option value="JPY">JPY (¥)</option>
-    </select>
-
-    <div id="modal-buttons">
-      <button id="modal-save">Save</button>
-      <button id="modal-cancel">Cancel</button>
-    </div>
-  </div>
+<div id="modal-content">
+<h3>Edit Expense</h3>
+<label for="edit-expense-name">Expense Name:</label>
+<input id="edit-expense-name" type="text"/>
+<label for="edit-expense-amount">Amount:</label>
+<input id="edit-expense-amount" min="0" step="0.01" type="number"/>
+<label for="edit-expense-category">Category:</label>
+<select id="edit-expense-category">
+<option value="Food">Food</option>
+<option value="Transport">Transport</option>
+<option value="Entertainment">Entertainment</option>
+<option value="Bills">Bills</option>
+<option value="Other">Other</option>
+</select>
+<label for="edit-expense-date">Date:</label>
+<input id="edit-expense-date" type="date"/>
+<label for="edit-currency">Currency:</label>
+<select id="edit-currency">
+<option value="USD">USD ($)</option>
+<option value="EUR">EUR (€)</option>
+<option value="GBP">GBP (£)</option>
+<option value="INR">INR (₹)</option>
+<option value="JPY">JPY (¥)</option>
+</select>
+<div id="modal-buttons">
+<button id="modal-save">Save</button>
+<button id="modal-cancel">Cancel</button>
 </div>
-
+</div>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   const expenseNameInput = document.getElementById('expense-name');
   const expenseAmountInput = document.getElementById('expense-amount');
   const expenseCategoryInput = document.getElementById('expense-category');
   const expenseDateInput = document.getElementById('expense-date');
-  const expenseCurrencyInput = document.getElementById('expense-currency');
+  const currencyInput = document.getElementById('currency');
   const addExpenseBtn = document.getElementById('add-expense-btn');
   const expensesList = document.getElementById('expenses-list');
 
@@ -349,7 +443,7 @@
   const editAmountInput = document.getElementById('edit-expense-amount');
   const editCategoryInput = document.getElementById('edit-expense-category');
   const editDateInput = document.getElementById('edit-expense-date');
-  const editCurrencyInput = document.getElementById('edit-expense-currency');
+  const editCurrencyInput = document.getElementById('edit-currency');
   const modalSaveBtn = document.getElementById('modal-save');
   const modalCancelBtn = document.getElementById('modal-cancel');
 
@@ -357,7 +451,7 @@
   let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
   let currentEditId = null;
 
-  // Chart setup
+  // Initialize chart
   const ctx = document.getElementById('expense-chart').getContext('2d');
   const expenseChart = new Chart(ctx, {
     type: 'doughnut',
@@ -366,114 +460,93 @@
       datasets: [{
         label: 'Expenses',
         data: [0, 0, 0, 0, 0],
-        backgroundColor: ['#ff6384','#3a9bdc','#f3ca74','#6bc5b6','#8a72e6'],
+        backgroundColor: ['#ff6384', '#3a9bdc', '#f3ca74', '#6bc5b6', '#8a72e6'],
         borderWidth: 1
       }]
     },
     options: {
       responsive: true,
-      plugins: { legend: { position: 'bottom' } }
+      plugins: {
+        legend: { position: 'bottom' }
+      }
     }
   });
 
-  function getCurrencySymbol(curr) {
-    return {USD:'$',EUR:'€',GBP:'£',INR:'₹',JPY:'¥'}[curr] || '';
-  }
-
   function updateExpensesDisplay() {
     expensesList.innerHTML = '';
-
     if (expenses.length === 0) {
-      expensesList.textContent = 'No expenses yet.';
+      expensesList.textContent = '.\n.\n.\n.\n.';
       return;
     }
 
-    // Group by date
-    const grouped = {};
-    expenses.forEach(exp => {
-      if (!grouped[exp.date]) grouped[exp.date] = [];
-      grouped[exp.date].push(exp);
-    });
+    expenses.forEach(expense => {
+      const div = document.createElement('div');
+      div.classList.add('expense-item');
 
-    // Sort dates descending
-    const sortedDates = Object.keys(grouped).sort((a,b) => b.localeCompare(a));
+      const infoDiv = document.createElement('div');
+      infoDiv.classList.add('expense-info');
+      infoDiv.textContent = `${expense.date} - ${expense.name} (${expense.category}): ${getCurrencySymbol(expense.currency)}${expense.amount.toFixed(2)}`;
 
-    sortedDates.forEach(date => {
-      const groupDiv = document.createElement('div');
-      groupDiv.classList.add('date-group');
+      const actionsDiv = document.createElement('div');
+      actionsDiv.classList.add('expense-actions');
 
-      const heading = document.createElement('div');
-      heading.classList.add('date-heading');
-      heading.textContent = date;
-      groupDiv.appendChild(heading);
+      const editBtn = document.createElement('button');
+      editBtn.textContent = 'Edit';
+      editBtn.addEventListener('click', () => openEditModal(expense.id));
 
-      grouped[date].forEach(expense => {
-        const div = document.createElement('div');
-        div.classList.add('expense-item');
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = 'Delete';
+      deleteBtn.addEventListener('click', () => deleteExpense(expense.id));
 
-        const infoDiv = document.createElement('div');
-        infoDiv.classList.add('expense-info');
-        infoDiv.textContent = `${expense.name} (${expense.category}): ${getCurrencySymbol(expense.currency)}${expense.amount.toFixed(2)}`;
+      actionsDiv.appendChild(editBtn);
+      actionsDiv.appendChild(deleteBtn);
 
-        const actionsDiv = document.createElement('div');
-        actionsDiv.classList.add('expense-actions');
+      div.appendChild(infoDiv);
+      div.appendChild(actionsDiv);
 
-        const editBtn = document.createElement('button');
-        editBtn.textContent = 'Edit';
-        editBtn.addEventListener('click', () => openEditModal(expense.id));
-
-        const deleteBtn = document.createElement('button');
-        deleteBtn.textContent = 'Delete';
-        deleteBtn.addEventListener('click', () => deleteExpense(expense.id));
-
-        actionsDiv.appendChild(editBtn);
-        actionsDiv.appendChild(deleteBtn);
-
-        div.appendChild(infoDiv);
-        div.appendChild(actionsDiv);
-        groupDiv.appendChild(div);
-      });
-
-      expensesList.appendChild(groupDiv);
+      expensesList.appendChild(div);
     });
   }
 
   function updateChart() {
-    const sums = { Food:0, Transport:0, Entertainment:0, Bills:0, Other:0 };
-    expenses.forEach(e => sums[e.category] += e.amount);
+    const sums = { Food: 0, Transport: 0, Entertainment: 0, Bills: 0, Other: 0 };
+    for (const expense of expenses) {
+      sums[expense.category] += expense.amount;
+    }
     expenseChart.data.datasets[0].data = categories.map(cat => sums[cat]);
     expenseChart.update();
   }
 
   function updateSummary() {
     const totals = {};
-    expenses.forEach(e => {
-      if (!totals[e.currency]) totals[e.currency] = 0;
-      totals[e.currency] += e.amount;
-    });
+    for (const expense of expenses) {
+      if (!totals[expense.currency]) totals[expense.currency] = 0;
+      totals[expense.currency] += expense.amount;
+    }
     const summaryDiv = document.getElementById('currency-summary');
+    if (Object.keys(totals).length === 0) {
+      summaryDiv.textContent = "No expenses yet.";
+      return;
+    }
     summaryDiv.innerHTML = Object.entries(totals)
-      .map(([curr, total]) => `${curr} ${getCurrencySymbol(curr)}${total.toFixed(2)}`)
-      .join(' | ') || 'No expenses yet.';
-  }
-
-  function saveExpenses() {
-    localStorage.setItem('expenses', JSON.stringify(expenses));
+      .map(([currency, total]) => `${currency} ${getCurrencySymbol(currency)}${total.toFixed(2)}`)
+      .join(" | ");
   }
 
   function addExpense() {
     const name = expenseNameInput.value.trim();
     const amount = parseFloat(expenseAmountInput.value);
     const category = expenseCategoryInput.value;
-    const date = expenseDateInput.value || new Date().toISOString().slice(0,10);
-    const currency = expenseCurrencyInput.value;
+    const date = expenseDateInput.value || new Date().toISOString().slice(0, 10);
+    const currency = currencyInput.value;
 
     if (!name || isNaN(amount) || amount <= 0) {
-      alert('Please fill all fields correctly.');
+      alert('Please enter valid details.');
       return;
     }
 
-    expenses.push({ id: Date.now(), name, amount, category, date, currency });
+    const id = Date.now();
+    expenses.push({ id, name, amount, category, date, currency });
     saveExpenses();
     updateExpensesDisplay();
     updateChart();
@@ -483,18 +556,18 @@
     expenseAmountInput.value = '';
     expenseCategoryInput.value = 'Food';
     expenseDateInput.value = '';
-    expenseCurrencyInput.value = 'USD';
   }
 
   function openEditModal(id) {
     currentEditId = id;
-    const exp = expenses.find(e => e.id === id);
-    if (!exp) return;
-    editNameInput.value = exp.name;
-    editAmountInput.value = exp.amount;
-    editCategoryInput.value = exp.category;
-    editDateInput.value = exp.date;
-    editCurrencyInput.value = exp.currency;
+    const expense = expenses.find(e => e.id === id);
+    if (!expense) return;
+
+    editNameInput.value = expense.name;
+    editAmountInput.value = expense.amount;
+    editCategoryInput.value = expense.category;
+    editDateInput.value = expense.date;
+    editCurrencyInput.value = expense.currency;
     modal.style.display = 'flex';
   }
 
@@ -507,22 +580,22 @@
     const name = editNameInput.value.trim();
     const amount = parseFloat(editAmountInput.value);
     const category = editCategoryInput.value;
-    const date = editDateInput.value || new Date().toISOString().slice(0,10);
+    const date = editDateInput.value || new Date().toISOString().slice(0, 10);
     const currency = editCurrencyInput.value;
 
     if (!name || isNaN(amount) || amount <= 0) {
-      alert('Please fill all fields correctly.');
+      alert('Please enter valid details.');
       return;
     }
 
     const index = expenses.findIndex(e => e.id === currentEditId);
-    if (index !== -1) {
-      expenses[index] = { id: currentEditId, name, amount, category, date, currency };
-      saveExpenses();
-      updateExpensesDisplay();
-      updateChart();
-      updateSummary();
-    }
+    if (index === -1) return;
+
+    expenses[index] = { id: currentEditId, name, amount, category, date, currency };
+    saveExpenses();
+    updateExpensesDisplay();
+    updateChart();
+    updateSummary();
     closeModal();
   }
 
@@ -535,16 +608,38 @@
     updateSummary();
   }
 
+  function saveExpenses() {
+    localStorage.setItem('expenses', JSON.stringify(expenses));
+  }
+
+  function getCurrencySymbol(currency) {
+    const symbols = { USD: '$', EUR: '€', GBP: '£', INR: '₹', JPY: '¥' };
+    return symbols[currency] || currency + ' ';
+  }
+
   addExpenseBtn.addEventListener('click', addExpense);
   modalSaveBtn.addEventListener('click', saveEdit);
   modalCancelBtn.addEventListener('click', closeModal);
-  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
 
-  // Initialize
   updateExpensesDisplay();
   updateChart();
   updateSummary();
 </script>
-
+<div id="budget-section">
+<h3>Set Spending Limits</h3>
+<input id="monthlyLimit" placeholder="Monthly Limit" type="number"/>
+<input id="weeklyLimit" placeholder="Weekly Limit" type="number"/>
+<button onclick="saveLimits()">SAVE</button>
+<div id="budget-summary">
+    Monthly Spent: <span id="monthlySpent">0</span> / Limit: <span id="monthlyLimitDisplay">0</span><br/>
+    Weekly Spent: <span id="weeklySpent">0</span> / Limit: <span id="weeklyLimitDisplay">0</span><br/>
+<span class="warning" id="warningMsg"></span>
+</div>
+<!-- New navigation button -->
+<div style="margin-top: 15px; text-align:center;">
+<button onclick="window.location.href='expensesummary.html'">View Summary</button>
+</div>
+</div>
 </body>
 </html>
