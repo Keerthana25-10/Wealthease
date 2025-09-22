@@ -6,7 +6,7 @@
   <title>Reminders for Monthly Bills</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 0;
       background: #000;
@@ -15,15 +15,23 @@
 
     header {
       background: #b2f0e6;
-      padding: 15px;
+      padding: 15px 30px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: flex-start;
+      gap: 15px;
     }
 
     header h1 {
       margin: 0;
-      font-size: 24px;
+      font-size: 28px;
+      font-weight: 800;
+      color: #111;
+      font-family: 'Trebuchet MS', sans-serif;
+    }
+
+    header img {
+      height: 55px;
     }
 
     .container {
@@ -61,6 +69,7 @@
       color: white;
       font-weight: bold;
       cursor: pointer;
+      transition: background 0.3s;
     }
 
     button:hover {
@@ -72,6 +81,26 @@
       padding: 10px;
       border-radius: 5px;
       min-height: 120px;
+    }
+
+    .bill-item {
+      background: #fff;
+      margin: 5px 0;
+      padding: 8px;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .bill-item button {
+      width: auto;
+      margin-left: 10px;
+      background: #444;
+    }
+
+    .bill-item button:hover {
+      background: #000;
     }
 
     .calendar {
@@ -123,8 +152,8 @@
 <body>
 
 <header>
+  <img src="reminder.png" alt="Logo">
   <h1>REMINDERS FOR MONTHLY BILLS</h1>
-  <img src="reminder.png" alt="Logo" height="50">
 </header>
 
 <div class="container">
@@ -180,11 +209,29 @@
     }
   }
 
+  function editBill(index) {
+    let bill = bills[index];
+    document.getElementById('bill-category').value = bill.category;
+    document.getElementById('bill-amount').value = bill.amount;
+    document.getElementById('bill-date').value = bill.date;
+
+    // Remove the old bill so it can be updated
+    bills.splice(index, 1);
+    saveBills();
+    displayBills();
+    renderCalendar();
+  }
+
   function displayBills() {
     const billList = document.getElementById('bill-list');
     billList.innerHTML = "";
-    bills.forEach(bill => {
-      billList.innerHTML += `<p>${bill.date} - ${bill.category}: ₹${bill.amount}</p>`;
+    bills.forEach((bill, index) => {
+      billList.innerHTML += `
+        <div class="bill-item">
+          <span>${bill.date} - ${bill.category}: ₹${bill.amount}</span>
+          <button onclick="editBill(${index})">Edit</button>
+        </div>
+      `;
     });
   }
 

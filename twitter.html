@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>WealthEase — Twitter Mock Profile</title>
+<style>
+  :root {
+    --bg: #f5f8fa;
+    --card: #ffffff;
+    --brand: #1da1f2;
+    --muted: #657786;
+    --max-width: 600px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: #14171a;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    border-left: 1px solid #e6ecf0;
+    border-right: 1px solid #e6ecf0;
+    min-height: 100vh;
+    background: var(--card);
+  }
+
+  /* Header / cover */
+  .cover {
+    height: 200px;
+    background: var(--brand);
+    position: relative;
+  }
+  .cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.6;
+  }
+  .profile-pic {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid #fff;
+    position: absolute;
+    bottom: -60px;
+    left: 16px;
+    object-fit: cover;
+    background: #eee;
+  }
+
+  /* Profile info */
+  .profile-info {
+    padding: 70px 16px 16px;
+    border-bottom: 1px solid #e6ecf0;
+  }
+  .profile-info h1 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .profile-info .handle {
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .profile-info .bio {
+    font-size: 14px;
+    margin: 8px 0;
+  }
+  .profile-info .stats {
+    display: flex;
+    gap: 20px;
+    margin-top: 8px;
+    font-size: 14px;
+  }
+  .profile-info .stats strong {
+    color: #14171a;
+  }
+  .follow-btn {
+    float: right;
+    margin-top: -40px;
+    margin-right: 16px;
+    padding: 6px 16px;
+    background: var(--brand);
+    color: #fff;
+    border: none;
+    border-radius: 9999px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  /* Tweets */
+  .tweet {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e6ecf0;
+    display: flex;
+    gap: 12px;
+  }
+  .tweet img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .tweet-body {
+    flex: 1;
+  }
+  .tweet-body .meta {
+    font-size: 14px;
+  }
+  .tweet-body .meta strong {
+    margin-right: 6px;
+  }
+  .tweet-body p {
+    margin: 4px 0 8px;
+    font-size: 15px;
+    line-height: 1.4;
+  }
+  .tweet-media {
+    margin-top: 6px;
+  }
+  .tweet-media img {
+    width: 100%;
+    border-radius: 12px;
+    max-height: 280px;
+    object-fit: cover;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <!-- Cover -->
+  <div class="cover">
+    <img src="logo.jpg" alt="">
+   
+  </div>
+
+  <!-- Profile info -->
+  <div class="profile-info">
+    <button class="follow-btn">Follow</button>
+    <h1>WealthEase</h1>
+    <div class="handle">@wealthease_demo</div>
+    <div class="bio">💰 One platform for money, impact & growth<br>📍 Project Demo Profile</div>
+    <div class="stats">
+      <div><strong>350</strong> Following</div>
+      <div><strong>1,250</strong> Followers</div>
+    </div>
+  </div>
+
+  <!-- Tweets -->
+  <div class="tweet">
+    <img src="logo.jpg" alt="">
+    <div class="tweet-body">
+      <div class="meta"><strong>WealthEase</strong> @wealthease_demo · Sep 22</div>
+      <p>🚀 Introducing our Smart Expense Tracker — set budgets, get alerts, and view analytics in real time!</p>
+      <div class="tweet-media">
+        
+      </div>
+    </div>
+  </div>
+
+  <div class="tweet">
+    <img src="logo.jpg" alt="">
+    <div class="tweet-body">
+      <div class="meta"><strong>WealthEase</strong> @wealthease_demo · Sep 15</div>
+      <p>🌍 Crowdfunding feature now live! Support causes you care about directly through our platform.</p>
+    </div>
+  </div>
+
+  <div class="tweet">
+    <img src="logo.jpg" alt="">
+    <div class="tweet-body">
+      <div class="meta"><strong>WealthEase</strong> @wealthease_demo · Aug 30</div>
+      <p>📊 Tip of the day: Track recurring payments like rent & EMIs to avoid last-minute surprises.</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

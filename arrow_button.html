@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Campaign Editor → Community Library</title>
+  <title>Editable Campaign Info</title>
   <style>
     :root{
-      --bg:#0a0a0a; /* black background */
-      --panel:#dcdcdc; /* light grey panels */
+      --bg:#0a0a0a;
+      --panel:#dcdcdc;
       --panel-2:#f6f6f6;
       --max-width:1000px;
       --gap:18px;
@@ -28,13 +28,19 @@
       border-top:8px solid #000;
       border-bottom:8px solid #000;
       text-align:center;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      justify-content:center;
     }
-    header h1{margin:0;font-size:34px;letter-spacing:2px}
+    header img{height:48px;border-radius:6px; object-fit:cover}
+    header h1{margin:0;font-size:28px;letter-spacing:2px;font-weight:800;color:#111}
     header p{margin:6px 0 0;color:#333;font-size:14px}
 
     .actions{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap}
     .btn{background:#000;color:#fff;padding:8px 12px;border-radius:6px;border:none;cursor:pointer;font-weight:700}
-    .btn.ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.15)}
+    .btn.ghost{background:transparent;color:#111;border:1px solid rgba(0,0,0,0.12)}
+    .btn.blue{background:#007bff;color:#fff}
 
     .grid{display:grid;grid-template-columns:1fr 360px;gap:var(--gap);margin-top:18px;align-items:start}
     .panel{background:var(--panel);padding:18px;border:6px solid #000;border-radius:6px}
@@ -44,23 +50,27 @@
     .full{grid-column:1 / -1}
 
     .image-box{display:flex;align-items:center;justify-content:center}
-    .image-box img{width:100%;height:auto;display:block;border:6px solid #000;border-radius:4px}
+    .image-box img{max-width:100%;border:6px solid #000;border-radius:4px}
 
     footer{margin-top:18px;text-align:center;color:#ccc;font-size:13px}
 
-    @media (max-width:900px){
-      .grid{grid-template-columns:1fr}
-      .image-box img{max-height:220px;object-fit:cover}
-      header h1{font-size:28px}
-    }
+    /* small helpers */
+    .meta {font-size:13px;color:#444;margin-top:8px;text-align:center}
+    .campaign-list {display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+    .campaign-pill {background:#111;color:#fff;padding:6px 10px;border-radius:22px;cursor:pointer;border:2px solid rgba(255,255,255,0.06);}
+    .campaign-pill:hover {transform:scale(1.02)}
   </style>
 </head>
 <body>
+
   <!-- ====== EDITOR PAGE ====== -->
   <div class="container" id="editor">
     <header>
-      <h1>CAMPAIGN — EDITABLE INFO</h1>
-      <p>Fill in your campaign details. Add a title and image. Click Save to draft or Finish to publish.</p>
+      <img id="headerImg" src="placeholder.png" alt="logo">
+      <div>
+        <h1>EDITABLE INFO</h1>
+        <p>Fill in your campaign details. Add title + image. Save to draft. Finish to publish a fixed campaign page.</p>
+      </div>
     </header>
 
     <div class="actions">
@@ -69,181 +79,376 @@
     </div>
 
     <div class="actions">
-      <button class="btn" id="saveBtn">Save</button>
-      <button class="btn ghost" id="resetBtn">Reset</button>
-      <button class="btn" id="finishBtn">Finish</button>
+      <button class="btn" id="saveBtn">Save Draft</button>
+      <button class="btn ghost" id="resetBtn">Reset Draft</button>
+      <button class="btn blue" id="finishBtn">Finish & Publish</button>
+    </div>
+
+    <div class="meta">
+      <div>Saved campaigns (click to open):</div>
+      <div class="campaign-list" id="campaignList"></div>
     </div>
 
     <div class="grid">
       <section class="panel">
         <h3>1. Why it matters</h3>
-        <div id="why" class="edit" contenteditable="true"
-          data-placeholder="Explain why this campaign matters..."></div>
+        <div id="why" class="edit" contenteditable="true" data-placeholder="Explain why this campaign is important..."></div>
       </section>
 
-      <aside class="image-box panel" style="padding:8px">
-        <img id="previewImg" src="" alt="Campaign image (preview)">
+      <aside class="image-box panel">
+        <img id="previewImg" src="placeholder.png" alt="campaign image">
       </aside>
 
       <section class="panel full">
         <h3>2. How the funds will be used</h3>
-        <div id="funds" class="edit" contenteditable="true"
-          data-placeholder="Describe budget items..."></div>
+        <div id="funds" class="edit" contenteditable="true" data-placeholder="Describe budget items..."></div>
       </section>
 
       <section class="panel">
         <h3>3. Impact</h3>
-        <div id="impact" class="edit" contenteditable="true"
-          data-placeholder="Describe expected impact..."></div>
+        <div id="impact" class="edit" contenteditable="true" data-placeholder="Describe expected impact..."></div>
       </section>
 
       <section class="panel">
         <h3>4. Donor engagement</h3>
-        <div id="donor" class="edit" contenteditable="true"
-          data-placeholder="Explain donor updates & recognition..."></div>
+        <div id="donor" class="edit" contenteditable="true" data-placeholder="Explain donor updates & recognition..."></div>
       </section>
     </div>
-
-    <footer>
-      Tip: Use <strong>Save</strong> to keep content in this browser.  
-      Click <strong>Finish</strong> to lock and publish to the Community Library.
-    </footer>
   </div>
 
-  <!-- ====== COMMUNITY LIBRARY PAGE ====== -->
-  <div id="communityPage" style="display:none">
-    <div class="container">
-      <header>
-        <h1 id="finalTitle">COMMUNITY LIBRARY</h1>
-      </header>
-
-      <div class="grid">
-        <div class="panel">
-          <h3>WHY IT MATTERS?</h3>
-          <p id="finalWhy"></p>
-        </div>
-
-        <div class="image-box">
-          <img id="finalImage" src="" alt="Community campaign image">
-        </div>
-
-        <div class="panel full">
-          <h3>HOW WILL THE FUNDS BE USED?</h3>
-          <p id="finalFunds"></p>
-        </div>
-
-        <div class="panel">
-          <h3>IMPACT</h3>
-          <p id="finalImpact"></p>
-        </div>
-
-        <div class="panel">
-          <h3>DONOR ENGAGEMENT</h3>
-          <p id="finalDonor"></p>
-        </div>
+  <!-- ====== COMMUNITY PAGE (fixed published campaign) ====== -->
+  <div class="container" id="community" style="display:none">
+    <header>
+      <img id="finalHeaderImg" src="placeholder.png" alt="campaign image">
+      <div>
+        <h1 id="finalTitle">COMMUNITY CAMPAIGN</h1>
+        <p id="finalMeta" style="margin:6px 0 0;color:#333;font-size:14px"></p>
       </div>
+    </header>
+
+    <div class="grid">
+      <div class="panel"><h3>Why it matters</h3><p id="finalWhy"></p></div>
+      <div class="image-box"><img id="finalImage" src="placeholder.png"></div>
+      <div class="panel full"><h3>Funds</h3><p id="finalFunds"></p></div>
+      <div class="panel"><h3>Impact</h3><p id="finalImpact"></p></div>
+      <div class="panel"><h3>Donor engagement</h3><p id="finalDonor"></p></div>
+    </div>
+
+    <div class="actions" style="justify-content:center">
+      <button class="btn blue" id="editBtn">Edit This Campaign</button>
+      <button class="btn" id="backToEditorBtn">Back to Editor</button>
     </div>
   </div>
 
   <script>
+    /* Keys and helpers */
+    const CAMPAIGNS_LIST_KEY = 'campaigns_list'; // stores array of ids
+    const CAMPAIGN_PREFIX = 'campaign_'; // full key = campaign_<id>
+    const DRAFT_KEY = 'campaign_draft'; // temporary draft
+    const LAST_VIEWED_KEY = 'last_viewed_campaign';
+
     const fields = ['why','funds','impact','donor'];
-    const saveBtn = document.getElementById('saveBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const finishBtn = document.getElementById('finishBtn');
+
     const titleInput = document.getElementById('campaignTitle');
     const imageInput = document.getElementById('campaignImage');
     const previewImg = document.getElementById('previewImg');
+    const headerImg = document.getElementById('headerImg');
 
-    // Load saved draft OR finished state
-    function loadContent(){
-      const finished = localStorage.getItem('campaign_finished');
-      if(finished === "true"){
-        showCommunity();
+    const saveBtn = document.getElementById('saveBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const finishBtn = document.getElementById('finishBtn');
+    const editBtn = document.getElementById('editBtn');
+    const backToEditorBtn = document.getElementById('backToEditorBtn');
+
+    let editingCampaignId = null; // null = working on draft, otherwise editing existing campaign id
+
+    /* utility: get query param */
+    function getQueryParam(name) {
+      const url = new URL(window.location.href);
+      return url.searchParams.get(name);
+    }
+
+    /* campaigns list helpers */
+    function loadCampaignsList() {
+      return JSON.parse(localStorage.getItem(CAMPAIGNS_LIST_KEY) || '[]');
+    }
+    function saveCampaignsList(list) {
+      localStorage.setItem(CAMPAIGNS_LIST_KEY, JSON.stringify(list));
+    }
+    function addCampaignToList(id, title) {
+      const list = loadCampaignsList();
+      if (!list.find(x => x.id === id)) {
+        list.unshift({id, title: title || 'Untitled', updated: Date.now()});
+      } else {
+        // update title & timestamp
+        for (let p of list) if(p.id === id){ p.title = title || p.title; p.updated = Date.now(); }
+      }
+      saveCampaignsList(list);
+      renderCampaignList();
+    }
+
+    /* Save draft - not final publish */
+    function saveDraft() {
+      const draft = {
+        title: titleInput.value.trim(),
+        image: previewImg.src.startsWith('data:') ? previewImg.src : (localStorage.getItem(DRAFT_KEY) ? (JSON.parse(localStorage.getItem(DRAFT_KEY)).image || previewImg.src) : previewImg.src),
+        fields: {}
+      };
+      fields.forEach(f => draft.fields[f] = document.getElementById(f).innerText.trim());
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      saveBtn.textContent = 'Saved ✓';
+      setTimeout(()=> saveBtn.textContent = 'Save Draft', 1100);
+
+      // If editing an existing campaign, also update that campaign immediately (auto-save edit)
+      if(editingCampaignId){
+        updatePublishedCampaign(editingCampaignId, draft);
+      }
+    }
+
+    /* Reset draft or current editing contents */
+    function resetDraft(){
+      if(!confirm('Reset draft/editor fields? This will not delete published campaigns.')) return;
+      localStorage.removeItem(DRAFT_KEY);
+      editingCampaignId = null;
+      fields.forEach(id => document.getElementById(id).innerText = '');
+      titleInput.value = '';
+      previewImg.src = 'placeholder.png';
+      headerImg.src = 'placeholder.png';
+      document.getElementById('editor').style.display='block';
+      document.getElementById('community').style.display='none';
+      renderCampaignList();
+    }
+
+    /* Finish: publish campaign (new or update existing), then show community view fixed */
+    function finishContent(){
+      // make sure current editor values are saved
+      saveDraft();
+      const draftRaw = JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}');
+
+      if(editingCampaignId){
+        // update existing published campaign, keep same id
+        updatePublishedCampaign(editingCampaignId, draftRaw);
+        // navigate to fixed view for same id
+        navigateToCampaign(editingCampaignId);
         return;
       }
 
-      // Load drafts
-      fields.forEach(id=>{
-        const el=document.getElementById(id);
-        const saved=localStorage.getItem('campaign_'+id);
-        if(saved!==null){ el.innerText=saved }
-      });
-      const savedTitle = localStorage.getItem('campaign_title');
-      if(savedTitle) titleInput.value = savedTitle;
+      // create new campaign id
+      const id = 'c' + Date.now();
+      const campaignObj = {
+        id,
+        title: draftRaw.title || 'Untitled Campaign',
+        image: draftRaw.image || previewImg.src,
+        fields: draftRaw.fields || (function(){ let r={}; fields.forEach(f=> r[f]=document.getElementById(f).innerText.trim()); return r; })(),
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      };
 
-      const savedImage = localStorage.getItem('campaign_image');
-      if(savedImage){
-        previewImg.src = savedImage;
-        previewImg.alt = 'Uploaded image';
+      // store under campaign_<id>
+      localStorage.setItem(CAMPAIGN_PREFIX + id, JSON.stringify(campaignObj));
+
+      // add id to campaigns list
+      addCampaignToList(id, campaignObj.title);
+
+      // mark last viewed
+      localStorage.setItem(LAST_VIEWED_KEY, id);
+
+      // navigate to campaign fixed view
+      navigateToCampaign(id);
+    }
+
+    function updatePublishedCampaign(id, draftObj) {
+      // load existing campaign (to preserve createdAt if exists)
+      const key = CAMPAIGN_PREFIX + id;
+      let existing = JSON.parse(localStorage.getItem(key) || '{}');
+      const updated = {
+        id,
+        title: (draftObj.title !== undefined ? draftObj.title : (existing.title || titleInput.value.trim() || 'Untitled Campaign')),
+        image: draftObj.image || existing.image || previewImg.src,
+        fields: draftObj.fields || (function(){ let r={}; fields.forEach(f=> r[f]=document.getElementById(f).innerText.trim()); return r; })(),
+        createdAt: existing.createdAt || Date.now(),
+        updatedAt: Date.now()
+      };
+      localStorage.setItem(key, JSON.stringify(updated));
+      addCampaignToList(id, updated.title);
+      // ensure last viewed
+      localStorage.setItem(LAST_VIEWED_KEY, id);
+    }
+
+    /* navigation helper to display community view for a campaign id */
+    function navigateToCampaign(id) {
+      // push url (so refresh keeps campaignId)
+      const url = new URL(window.location.href);
+      url.searchParams.set('campaignId', id);
+      window.history.replaceState({}, '', url);
+      renderCampaignView(id);
+    }
+
+    /* Render community (fixed) view for campaign id */
+    function renderCampaignView(id) {
+      const key = CAMPAIGN_PREFIX + id;
+      const raw = localStorage.getItem(key);
+      if(!raw){
+        alert('Campaign not found.');
+        return showEditorDefault();
       }
-    }
+      const camp = JSON.parse(raw);
+      document.getElementById('finalTitle').innerText = camp.title || 'COMMUNITY CAMPAIGN';
+      document.getElementById('finalWhy').innerText = camp.fields.why || '[empty]';
+      document.getElementById('finalFunds').innerText = camp.fields.funds || '[empty]';
+      document.getElementById('finalImpact').innerText = camp.fields.impact || '[empty]';
+      document.getElementById('finalDonor').innerText = camp.fields.donor || '[empty]';
+      document.getElementById('finalImage').src = camp.image || 'placeholder.png';
+      document.getElementById('finalHeaderImg').src = camp.image || 'placeholder.png';
+      document.getElementById('finalMeta').innerText = `Published: ${new Date(camp.updatedAt||camp.createdAt).toLocaleString()}`;
 
-    // Save draft
-    function saveContent(){
-      fields.forEach(id=>{
-        const el=document.getElementById(id);
-        localStorage.setItem('campaign_'+id, el.innerText.trim());
-      });
-      localStorage.setItem('campaign_title', titleInput.value.trim());
-      if(previewImg.src && previewImg.src.startsWith('data:')){
-        localStorage.setItem('campaign_image', previewImg.src);
-      }
-      saveBtn.textContent='Saved ✓';
-      setTimeout(()=> saveBtn.textContent='Save',1200);
-    }
-
-    // Reset everything
-    function resetContent(){
-      if(!confirm('Reset everything?')) return;
-      fields.forEach(id=>{
-        localStorage.removeItem('campaign_'+id);
-        document.getElementById(id).innerText='';
-      });
-      localStorage.removeItem('campaign_title');
-      localStorage.removeItem('campaign_image');
-      localStorage.removeItem('campaign_finished');
-      titleInput.value='';
-      previewImg.src = '';
-      previewImg.alt = 'No image selected';
-      location.reload();
-    }
-
-    // Show Community page with saved data
-    function showCommunity(){
+      // show community and hide editor
       document.getElementById('editor').style.display='none';
-      document.getElementById('communityPage').style.display='block';
+      document.getElementById('community').style.display='block';
 
-      document.getElementById('finalTitle').innerText =
-        localStorage.getItem('campaign_title') || 'Community Library';
-      document.getElementById('finalWhy').innerText =
-        localStorage.getItem('campaign_why') || '[empty]';
-      document.getElementById('finalFunds').innerText =
-        localStorage.getItem('campaign_funds') || '[empty]';
-      document.getElementById('finalImpact').innerText =
-        localStorage.getItem('campaign_impact') || '[empty]';
-      document.getElementById('finalDonor').innerText =
-        localStorage.getItem('campaign_donor') || '[empty]';
+      // set editingCampaignId to this id so Edit knows what to modify
+      editingCampaignId = id;
+      // store last viewed
+      localStorage.setItem(LAST_VIEWED_KEY, id);
+    }
 
-      const savedImage = localStorage.getItem('campaign_image');
-      if(savedImage){
-        document.getElementById('finalImage').src = savedImage;
+    /* Show editor with either draft or empty */
+    function showEditorDefault() {
+      document.getElementById('editor').style.display='block';
+      document.getElementById('community').style.display='none';
+      editingCampaignId = null;
+
+      // load draft if present
+      const draftRaw = JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}');
+      if(draftRaw && (draftRaw.title || draftRaw.image || draftRaw.fields)){
+        titleInput.value = draftRaw.title || '';
+        previewImg.src = draftRaw.image || 'placeholder.png';
+        headerImg.src = draftRaw.image || 'placeholder.png';
+        fields.forEach(f => document.getElementById(f).innerText = (draftRaw.fields && draftRaw.fields[f]) || '');
+      } else {
+        // clear fields
+        titleInput.value = '';
+        previewImg.src = 'placeholder.png';
+        headerImg.src = 'placeholder.png';
+        fields.forEach(f => document.getElementById(f).innerText = '');
       }
     }
 
-    // Finish campaign
-    function finishContent(){
-      saveContent(); // save one last time
-      localStorage.setItem('campaign_finished', "true");
-      showCommunity();
+    /* Load a published campaign into editor for editing */
+    function editCampaign(id) {
+      const raw = localStorage.getItem(CAMPAIGN_PREFIX + id);
+      if(!raw) { alert('Campaign not found'); return; }
+      const camp = JSON.parse(raw);
+      titleInput.value = camp.title || '';
+      previewImg.src = camp.image || 'placeholder.png';
+      headerImg.src = camp.image || 'placeholder.png';
+      fields.forEach(f => document.getElementById(f).innerText = camp.fields[f] || '');
+      editingCampaignId = id;
+      // show editor
+      document.getElementById('editor').style.display='block';
+      document.getElementById('community').style.display='none';
+      // also write a draft copy for safety
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({title:camp.title,image:camp.image,fields:camp.fields}));
     }
 
-    // Events
-    saveBtn.addEventListener('click', saveContent);
-    resetBtn.addEventListener('click', resetContent);
+    /* Build the campaign list pills UI */
+    function renderCampaignList(){
+      const listEl = document.getElementById('campaignList');
+      listEl.innerHTML = '';
+      const list = loadCampaignsList();
+      if(list.length === 0){
+        listEl.innerHTML = '<span style="color:#999">No published campaigns yet</span>';
+        return;
+      }
+      list.forEach(item => {
+        const btn = document.createElement('button');
+        btn.className = 'campaign-pill';
+        btn.textContent = item.title.length > 24 ? item.title.slice(0,22)+'…' : item.title;
+        btn.title = item.title;
+        btn.onclick = () => { navigateToCampaign(item.id); };
+        listEl.appendChild(btn);
+      });
+    }
+
+    /* helper: read file input as dataURL for preview */
+    imageInput.addEventListener('change', function(){
+      const file = this.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        previewImg.src = e.target.result;
+        headerImg.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    /* Load on startup */
+    (function init(){
+      renderCampaignList();
+
+      // if campaignId param in URL -> show that campaign (fixed view)
+      const campaignIdFromURL = getQueryParam('campaignId');
+      if(campaignIdFromURL && localStorage.getItem(CAMPAIGN_PREFIX + campaignIdFromURL)){
+        renderCampaignView(campaignIdFromURL);
+        return;
+      }
+
+      // if last viewed published campaign exists, show it (this matches "finish should be fixed" UX)
+      const last = localStorage.getItem(LAST_VIEWED_KEY);
+      if(last && localStorage.getItem(CAMPAIGN_PREFIX + last)){
+        renderCampaignView(last);
+        return;
+      }
+
+      // else load draft into editor (if exists) or show blank editor
+      showEditorDefault();
+    })();
+
+    /* Events */
+    saveBtn.addEventListener('click', () => {
+      saveDraft();
+      // if editing existing campaign, ensure campaigns list updated
+      if(editingCampaignId){
+        // update published campaign with draft
+        const draftRaw = JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}');
+        updatePublishedCampaign(editingCampaignId, draftRaw);
+        addCampaignToList(editingCampaignId, draftRaw.title);
+      }
+    });
+
+    resetBtn.addEventListener('click', resetDraft);
+
     finishBtn.addEventListener('click', finishContent);
 
-    // Init
-    loadContent();
+    editBtn.addEventListener('click', () => {
+      // when in community view (editingCampaignId is the published id), go to editor with that campaign
+      if(editingCampaignId){
+        editCampaign(editingCampaignId);
+      } else {
+        showEditorDefault();
+      }
+    });
+
+    backToEditorBtn.addEventListener('click', () => {
+      showEditorDefault();
+      // remove campaignId param from URL
+      const url = new URL(window.location.href);
+      url.searchParams.delete('campaignId');
+      window.history.replaceState({}, '', url);
+    });
+
+    // Also allow clicking published campaign pills to go to campaign view (handled above)
+
+    // Safety: when user navigates with back/forward we still respond
+    window.addEventListener('popstate', () => {
+      const campaignIdFromURL = getQueryParam('campaignId');
+      if(campaignIdFromURL && localStorage.getItem(CAMPAIGN_PREFIX + campaignIdFromURL)){
+        renderCampaignView(campaignIdFromURL);
+      } else {
+        showEditorDefault();
+      }
+    });
+
   </script>
 </body>
 </html>
