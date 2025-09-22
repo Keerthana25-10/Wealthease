@@ -1,693 +1,666 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>Smart Expense Tracker</title>
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap');
-
-    #budget-section h3 {
-  color: white;
-}
-
-    body {
-      margin: 0;
-      font-family: 'Didact Gothic', sans-serif;
-      background-color: #000;
-      color: #000;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-    }
-
-    header {
-      background-color: #d6f7f7;
-      width: 90vw;
-      max-width: 900px;
-      padding: 10px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      border-radius: 5px;
-    }
-
-    header h1 {
-      font-family: 'Didact Gothic', sans-serif;
-      font-weight: 400;
-      font-size: 2rem;
-      letter-spacing: 3px;
-      margin: 0;
-    }
-
-    header img {
-      width: 40px;
-      height: 40px;
-      object-fit: contain;
-    }
-
-    main {
-      background-color: #90e0d9;
-      width: 90vw;
-      max-width: 900px;
-      display: grid;
-      grid-template-columns: 1fr 1.2fr;
-      gap: 20px;
-      padding: 20px;
-      border-radius: 5px;
-      box-sizing: border-box;
-    }
-
-    section {
-      background-color: #ccfffc;
-      border-radius: 5px;
-      padding: 15px;
-      box-sizing: border-box;
-    }
-
-    #add-expense {
-      background-color: #b2e8e1;
-      padding: 15px;
-      border-radius: 5px;
-      margin-bottom: 15px;
-    }
-
-    #add-expense label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: 600;
-    }
-
-    #add-expense input[type="text"],
-    #add-expense input[type="number"],
-    #add-expense input[type="date"],
-    #add-expense select {
-      width: 100%;
-      padding: 7px 10px;
-      margin-bottom: 15px;
-      border: none;
-      border-radius: 5px;
-      background-color: #d3d3d3;
-      font-size: 1rem;
-      box-sizing: border-box;
-    }
-
-    #add-expense button {
-      width: 100%;
-      padding: 10px;
-      background-color: #ea93ff;
-      border: none;
-      border-radius: 5px;
-      color: white;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    #add-expense button:hover {
-      background-color: #c168cc;
-    }
-
-    #daily-expenses {
-      background-color: #d5f4f0;
-      padding: 15px;
-      border-radius: 5px;
-      height: 300px;
-      overflow-y: auto;
-      box-sizing: border-box;
-    }
-
-    #daily-expenses-title {
-      text-align: center;
-      margin-bottom: 10px;
-      font-weight: 600;
-      user-select: none;
-    }
-
-    .expense-item {
-      background: white;
-      margin-bottom: 8px;
-      padding: 8px 10px;
-      border-radius: 5px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 0 3px rgba(0,0,0,0.1);
-    }
-
-    .expense-info {
-      flex-grow: 1;
-      font-weight: 500;
-      font-size: 0.9rem;
-      user-select: none;
-      overflow-wrap: anywhere;
-    }
-
-    .expense-actions button {
-      margin-left: 8px;
-      background: #ea93ff;
-      border: none;
-      padding: 5px 8px;
-      border-radius: 4px;
-      cursor: pointer;
-      color: white;
-      font-weight: 600;
-      font-size: 0.8rem;
-      transition: background-color 0.3s ease;
-    }
-
-    .expense-actions button:hover {
-      background-color: #c168cc;
-    }
-
-    /* Modal styles */
-    #modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background-color: rgba(0,0,0,0.6);
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-    }
-
-    #modal-content {
-      background-color: #d5f4f0;
-      padding: 20px;
-      border-radius: 8px;
-      width: 320px;
-      box-sizing: border-box;
-      box-shadow: 0 0 15px rgba(0,0,0,0.4);
-    }
-
-    #modal-content label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: 600;
-    }
-
-    #modal-content input[type="text"],
-    #modal-content input[type="number"],
-    #modal-content input[type="date"],
-    #modal-content select {
-      width: 100%;
-      padding: 7px 10px;
-      margin-bottom: 15px;
-      border: none;
-      border-radius: 5px;
-      background-color: #d3d3d3;
-      font-size: 1rem;
-      box-sizing: border-box;
-    }
-
-    #modal-buttons {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-    }
-
-    #modal-buttons button {
-      padding: 8px 15px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 1rem;
-    }
-
-    #modal-save {
-      background-color: #5aab61;
-      color: white;
-      transition: background-color 0.3s ease;
-    }
-
-    #modal-save:hover {
-      background-color: #3f7f3e;
-    }
-
-    #modal-cancel {
-      background-color: #ea93ff;
-      color: white;
-      transition: background-color 0.3s ease;
-    }
-
-    #modal-cancel:hover {
-      background-color: #c168cc;
-    }
-
-    /* Summary section */
-    #currency-summary {
-      margin-top: 15px;
-      padding: 10px;
-      background: #b2e8e1;
-      border-radius: 6px;
-      font-weight: 600;
-      font-size: 1rem;
-      line-height: 1.6;
-      text-align: center;
-    }
-  
-
-  /* Budget Section Buttons */
-  #budget-section button {
-    padding: 10px 18px;
+  @import url('https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap');
+  body {
+    margin: 0;
+    font-family: 'Didact Gothic', sans-serif;
+    background-color: #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  header {
+    background-color: #d6f7f7;
+    width: 90vw;
+    max-width: 1000px;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-radius: 5px;
+  }
+  header h1 {
+    font-weight: 400;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    margin: 0;
+  }
+  main {
+    background: white;
+    width: 90vw;
+    max-width: 1000px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    padding: 15px;
+    border-radius: 8px;
+  }
+  #left-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  #add-expense {
+    background: #c3f1ee;
+    padding: 15px;
+    border-radius: 8px;
+  }
+  #add-expense h3,
+  #daily-expenses h3,
+  .chart-title {
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  #add-expense label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+  }
+  #add-expense input,
+  #add-expense select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
     border: none;
-    border-radius: 25px;
-    font-size: 1rem;
-    font-weight: 600;
+    border-radius: 6px;
+    background: #eaeaea;
+  }
+  #add-expense button {
+    width: 100%;
+    background: #ea93ff;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    color: white;
+    font-weight: bold;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
   }
-
-  /* Save button (Monthly/Weekly limit) */
-  #budget-section button:nth-of-type(1) {
-    background: linear-gradient(135deg, #6dd5ed, #2193b0);
+  #add-expense button:hover {
+    background: #c168cc;
+  }
+  #daily-expenses {
+    background: #d5f4f0;
+    padding: 15px;
+    border-radius: 8px;
+    height: 250px;
+    overflow-y: auto;
+  }
+  .expense-item {
+    background: white;
+    padding: 6px 8px;
+    margin-bottom: 6px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .expense-actions button {
+    margin-left: 5px;
+    background: #ea93ff;
+    border: none;
+    padding: 5px 8px;
+    border-radius: 4px;
+    cursor: pointer;
     color: white;
+    font-size: 0.75rem;
   }
-  #budget-section button:nth-of-type(1):hover {
-    background: linear-gradient(135deg, #2193b0, #6dd5ed);
-    transform: scale(1.05);
+  #right-panel {
+    background: #fff;
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
-
-  /* Summary button */
-  #budget-section div button {
-    background: linear-gradient(135deg, #ff9966, #ff5e62);
+  .chart-title {
+    color: #4a4a9d;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+  #chart-filter {
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  #chart-filter select {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  h4 {
+    margin-top: 15px;
+    margin-bottom: 5px;
+    text-align: center;
+  }
+  /* ✅ Limits Panel styled as a card */
+  #limits-panel {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    margin-top: 10px;
+  }
+  #limits-panel h3 {
+    margin-top: 0;
+    color: #4a4a9d;
+    text-align: center;
+  }
+  #limits-panel label {
+    display: block;
+    margin: 10px 0 5px;
+    font-weight: bold;
+  }
+  #limits-panel select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 6px;
+    background: #eaeaea;
+  }
+  #limits-panel button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  #save-limits-btn {
+    background: #4a90e2;
     color: white;
+    transition: background 0.3s, transform 0.2s;
   }
-  #budget-section div button:hover {
-    background: linear-gradient(135deg, #ff5e62, #ff9966);
-    transform: scale(1.05);
+  #save-limits-btn:hover {
+    background: #357ABD;
+    transform: translateY(-2px);
   }
-
-
-/* Modernized select dropdown */
-#add-expense select,
-#modal-content select,
-#budget-section select {
-  width: 100%;
-  padding: 10px 12px;
-  border: none;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #fdfbfb, #ebedee);
-  font-size: 1rem;
-  font-weight: 500;
-  color: #333;
-  appearance: none;
-  cursor: pointer;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-  transition: all 0.3s ease;
-}
-
-/* Hover and focus effects */
-#add-expense select:hover,
-#modal-content select:hover,
-#budget-section select:hover,
-#add-expense select:focus,
-#modal-content select:focus,
-#budget-section select:focus {
-  background: linear-gradient(135deg, #dfe9f3, #ffffff);
-  outline: none;
-  transform: scale(1.02);
-}
-
-/* Option styling */
-#add-expense select option,
-#modal-content select option,
-#budget-section select option {
-  padding: 10px;
-  font-size: 1rem;
-  background: #fff;
-  color: #333;
-}
-
-
-/* Monthly & Weekly Limit Inputs */
-#budget-section input[type="number"] {
-  width: 100%;
-  max-width: 250px;
-  padding: 10px 14px;
-  margin: 8px 0;
-  border: none;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #ffffff, #f2f2f2);
-  font-size: 1rem;
-  font-weight: 500;
-  color: #333;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-  transition: all 0.3s ease;
-}
-
-/* Hover & Focus */
-#budget-section input[type="number"]:hover,
-#budget-section input[type="number"]:focus {
-  background: linear-gradient(135deg, #dfe9f3, #ffffff);
-  outline: none;
-  transform: scale(1.02);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
+  #limits-panel button:last-child {
+    background: #ea93ff;
+    color: white;
+    transition: background 0.3s, transform 0.2s;
+  }
+  #limits-panel button:last-child:hover {
+    background: #c168cc;
+    transform: translateY(-2px);
+  }
+  /* ✅ Interactive Login Card */
+  .login-card {
+    background: linear-gradient(135deg, #a8edea, #fed6e3);
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 350px;
+    width: 100%;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    animation: fadeIn 0.8s ease-in-out;
+  }
+  .login-card h2 {
+    margin: 0 0 10px;
+    color: #333;
+    font-weight: 600;
+  }
+  .login-card p {
+    margin-bottom: 15px;
+    color: #555;
+  }
+  .login-card input {
+    width: 100%;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 1rem;
+    outline: none;
+    transition: box-shadow 0.3s ease;
+  }
+  .login-card input:focus {
+    box-shadow: 0 0 0 3px rgba(74,144,226,0.4);
+  }
+  .login-card button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    background: #4a90e2;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.3s;
+  }
+  .login-card button:hover {
+    background: #357ABD;
+    transform: translateY(-2px);
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 </style>
 </head>
 <body>
 <header>
-<h1>SMART EXPENSE TRACKER</h1>
-<img alt="expense icon" src="https://cdn-icons-png.flaticon.com/512/2838/2838912.png"/>
+  <h1>SMART EXPENSE TRACKER</h1>
+  <img alt="expense icon" src="https://cdn-icons-png.flaticon.com/512/2838/2838912.png" width="40"/>
 </header>
-<main>
-<section>
-<div id="add-expense">
-<label for="expense-name">Expense Name:</label>
-<input id="expense-name" placeholder="e.g., Food" type="text"/>
-<label for="expense-amount">Amount:</label>
-<input id="expense-amount" min="0" placeholder="e.g., 25" step="0.01" type="number"/>
-<label for="expense-category">Category:</label>
-<select id="expense-category">
-<option value="Food">Food</option>
-<option value="Transport">Transport</option>
-<option value="Entertainment">Entertainment</option>
-<option value="Bills">Bills</option>
-<option value="Other">Other</option>
-</select>
-<label for="expense-date">Date:</label>
-<input id="expense-date" type="date"/>
-<label for="currency">Currency:</label>
-<select id="currency">
-<option selected="" value="USD">USD ($)</option>
-<option value="EUR">EUR (€)</option>
-<option value="GBP">GBP (£)</option>
-<option value="INR">INR (₹)</option>
-<option value="JPY">JPY (¥)</option>
-</select>
-<button id="add-expense-btn">ADD EXPENSE</button>
+
+<!-- ✅ Interactive Login Panel -->
+<div id="login-panel" class="login-card">
+  <h2>Welcome Back 👋</h2>
+  <p>Please enter your username to continue</p>
+  <input id="username" type="text" placeholder="Enter your name"/>
+  <button id="login-btn">Login</button>
 </div>
-<div id="daily-expenses">
-<div id="daily-expenses-title">DAILY EXPENSES:</div>
-<div id="expenses-list"></div>
+
+<main style="display:none;" id="app-main">
+  <!-- Left Panel -->
+  <section id="left-panel">
+    <div id="add-expense">
+      <h3>Add New Expense:</h3>
+      <label for="expense-name">Expense Name:</label>
+      <input id="expense-name" type="text"/>
+      <label for="expense-amount">Amount:</label>
+      <input id="expense-amount" type="number" step="0.01"/>
+      <label for="expense-category">Category:</label>
+      <select id="expense-category">
+        <option value="Food">Food</option>
+        <option value="Transport">Transport</option>
+        <option value="Entertainment">Entertainment</option>
+        <option value="Bills">Bills</option>
+        <option value="Other">Other</option>
+      </select>
+      <label for="expense-date">Date:</label>
+      <input id="expense-date" type="date"/>
+      <label for="currency">Currency:</label>
+      <select id="currency">
+        <option selected value="USD">USD ($)</option>
+        <option value="EUR">EUR (€)</option>
+        <option value="GBP">GBP (£)</option>
+        <option value="INR">INR (₹)</option>
+        <option value="JPY">JPY (¥)</option>
+      </select>
+      
+<label for="receipt-upload">Scan Receipt:</label>
+<input type="file" id="receipt-upload" accept="image/*"/>
+<button id="scan-receipt-btn" type="button">Scan Receipt</button>
+<p id="scan-status" style="font-size:0.8rem; color:gray;"></p>
+<div id="scan-preview" style="display:none; background:#f1f1f1; padding:10px; border-radius:6px; margin-top:8px; font-size:0.9rem;">
+  <strong>Scan Results:</strong>
+  <p id="preview-store"></p>
+  <p id="preview-amount"></p>
+  <p id="preview-date"></p>
+  <p id="preview-currency"></p>
+  <label for="preview-category-select">Category:</label>
+  <select id="preview-category-select" style="margin-left:5px; padding:3px; border-radius:4px;">
+    <option value="Food">Food</option>
+    <option value="Transport">Transport</option>
+    <option value="Entertainment">Entertainment</option>
+    <option value="Bills">Bills</option>
+    <option value="Other">Other</option>
+  </select>
+  <p id="preview-detected-line" style="font-style:italic; color:#555;"></p>
+  <button id="use-scan-btn" type="button" style="margin-top:5px; background:#4a90e2; color:white; border:none; padding:6px 10px; border-radius:4px; cursor:pointer;">Use Data</button>
 </div>
-</section>
-<section id="chart-container">
-<div id="chart-title">Expense Distribution</div>
-<canvas id="expense-chart"></canvas>
-<div id="currency-summary">No expenses yet.</div>
-</section>
+
+
+      <button id="add-expense-btn">ADD EXPENSE</button>
+    </div>
+
+    <div id="daily-expenses">
+      <h3>DAILY EXPENSES:</h3>
+      <div id="expenses-list"></div>
+    </div>
+
+    <!-- ✅ Styled Limits Panel -->
+    <div id="limits-panel">
+      <h3>Set Limits</h3>
+      <label for="monthly-limit">Monthly Limit:</label>
+      <select id="monthly-limit">
+        <option value="0">No Limit</option>
+        <option value="500">500</option>
+        <option value="1000">1000</option>
+        <option value="2000">2000</option>
+        <option value="5000">5000</option>
+      </select>
+
+      <label for="weekly-limit">Weekly Limit:</label>
+      <select id="weekly-limit">
+        <option value="0">No Limit</option>
+        <option value="100">100</option>
+        <option value="250">250</option>
+        <option value="500">500</option>
+        <option value="1000">1000</option>
+      </select>
+
+      <button id="save-limits-btn">Save Limits</button>
+      <button onclick="window.location.href='expensesummary.html'">Go to Summary</button>
+    </div>
+  </section>
+
+  <!-- Right Panel -->
+  <section id="right-panel">
+    <h3 class="chart-title">Expense Distribution</h3>
+    <div id="chart-filter">
+      <label for="month-select">Choose Month:</label>
+      <select id="month-select"><option value="all">All</option></select>
+    </div>
+    <div id="charts-wrapper"></div>
+  </section>
 </main>
-<!-- Edit Modal -->
-<div id="modal">
-<div id="modal-content">
-<h3>Edit Expense</h3>
-<label for="edit-expense-name">Expense Name:</label>
-<input id="edit-expense-name" type="text"/>
-<label for="edit-expense-amount">Amount:</label>
-<input id="edit-expense-amount" min="0" step="0.01" type="number"/>
-<label for="edit-expense-category">Category:</label>
-<select id="edit-expense-category">
-<option value="Food">Food</option>
-<option value="Transport">Transport</option>
-<option value="Entertainment">Entertainment</option>
-<option value="Bills">Bills</option>
-<option value="Other">Other</option>
-</select>
-<label for="edit-expense-date">Date:</label>
-<input id="edit-expense-date" type="date"/>
-<label for="edit-currency">Currency:</label>
-<select id="edit-currency">
-<option value="USD">USD ($)</option>
-<option value="EUR">EUR (€)</option>
-<option value="GBP">GBP (£)</option>
-<option value="INR">INR (₹)</option>
-<option value="JPY">JPY (¥)</option>
-</select>
-<div id="modal-buttons">
-<button id="modal-save">Save</button>
-<button id="modal-cancel">Cancel</button>
-</div>
-</div>
-</div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  const expenseNameInput = document.getElementById('expense-name');
-  const expenseAmountInput = document.getElementById('expense-amount');
-  const expenseCategoryInput = document.getElementById('expense-category');
-  const expenseDateInput = document.getElementById('expense-date');
-  const currencyInput = document.getElementById('currency');
-  const addExpenseBtn = document.getElementById('add-expense-btn');
-  const expensesList = document.getElementById('expenses-list');
-
-  // Modal elements
-  const modal = document.getElementById('modal');
-  const editNameInput = document.getElementById('edit-expense-name');
-  const editAmountInput = document.getElementById('edit-expense-amount');
-  const editCategoryInput = document.getElementById('edit-expense-category');
-  const editDateInput = document.getElementById('edit-expense-date');
-  const editCurrencyInput = document.getElementById('edit-currency');
-  const modalSaveBtn = document.getElementById('modal-save');
-  const modalCancelBtn = document.getElementById('modal-cancel');
-
   const categories = ['Food', 'Transport', 'Entertainment', 'Bills', 'Other'];
-  let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
-  let currentEditId = null;
+  let expenses = [];
+  let charts = [];
+  let currentUser = null;
 
-  // Initialize chart
-  const ctx = document.getElementById('expense-chart').getContext('2d');
-  const expenseChart = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels: categories,
-      datasets: [{
-        label: 'Expenses',
-        data: [0, 0, 0, 0, 0],
-        backgroundColor: ['#ff6384', '#3a9bdc', '#f3ca74', '#6bc5b6', '#8a72e6'],
-        borderWidth: 1
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { position: 'bottom' }
-      }
-    }
-  });
-
-  function updateExpensesDisplay() {
-    expensesList.innerHTML = '';
-    if (expenses.length === 0) {
-      expensesList.textContent = '.\n.\n.\n.\n.';
-      return;
-    }
-
-    expenses.forEach(expense => {
-      const div = document.createElement('div');
-      div.classList.add('expense-item');
-
-      const infoDiv = document.createElement('div');
-      infoDiv.classList.add('expense-info');
-      infoDiv.textContent = `${expense.date} - ${expense.name} (${expense.category}): ${getCurrencySymbol(expense.currency)}${expense.amount.toFixed(2)}`;
-
-      const actionsDiv = document.createElement('div');
-      actionsDiv.classList.add('expense-actions');
-
-      const editBtn = document.createElement('button');
-      editBtn.textContent = 'Edit';
-      editBtn.addEventListener('click', () => openEditModal(expense.id));
-
-      const deleteBtn = document.createElement('button');
-      deleteBtn.textContent = 'Delete';
-      deleteBtn.addEventListener('click', () => deleteExpense(expense.id));
-
-      actionsDiv.appendChild(editBtn);
-      actionsDiv.appendChild(deleteBtn);
-
-      div.appendChild(infoDiv);
-      div.appendChild(actionsDiv);
-
-      expensesList.appendChild(div);
-    });
-  }
-
-  function updateChart() {
-    const sums = { Food: 0, Transport: 0, Entertainment: 0, Bills: 0, Other: 0 };
-    for (const expense of expenses) {
-      sums[expense.category] += expense.amount;
-    }
-    expenseChart.data.datasets[0].data = categories.map(cat => sums[cat]);
-    expenseChart.update();
-  }
-
-  function updateSummary() {
-    const totals = {};
-    for (const expense of expenses) {
-      if (!totals[expense.currency]) totals[expense.currency] = 0;
-      totals[expense.currency] += expense.amount;
-    }
-    const summaryDiv = document.getElementById('currency-summary');
-    if (Object.keys(totals).length === 0) {
-      summaryDiv.textContent = "No expenses yet.";
-      return;
-    }
-    summaryDiv.innerHTML = Object.entries(totals)
-      .map(([currency, total]) => `${currency} ${getCurrencySymbol(currency)}${total.toFixed(2)}`)
-      .join(" | ");
-  }
-
-  function addExpense() {
-    const name = expenseNameInput.value.trim();
-    const amount = parseFloat(expenseAmountInput.value);
-    const category = expenseCategoryInput.value;
-    const date = expenseDateInput.value || new Date().toISOString().slice(0, 10);
-    const currency = currencyInput.value;
-
-    if (!name || isNaN(amount) || amount <= 0) {
-      alert('Please enter valid details.');
-      return;
-    }
-
-    const id = Date.now();
-    expenses.push({ id, name, amount, category, date, currency });
-    saveExpenses();
-    updateExpensesDisplay();
-    updateChart();
-    updateSummary();
-
-    expenseNameInput.value = '';
-    expenseAmountInput.value = '';
-    expenseCategoryInput.value = 'Food';
-    expenseDateInput.value = '';
-  }
-
-  function openEditModal(id) {
-    currentEditId = id;
-    const expense = expenses.find(e => e.id === id);
-    if (!expense) return;
-
-    editNameInput.value = expense.name;
-    editAmountInput.value = expense.amount;
-    editCategoryInput.value = expense.category;
-    editDateInput.value = expense.date;
-    editCurrencyInput.value = expense.currency;
-    modal.style.display = 'flex';
-  }
-
-  function closeModal() {
-    modal.style.display = 'none';
-    currentEditId = null;
-  }
-
-  function saveEdit() {
-    const name = editNameInput.value.trim();
-    const amount = parseFloat(editAmountInput.value);
-    const category = editCategoryInput.value;
-    const date = editDateInput.value || new Date().toISOString().slice(0, 10);
-    const currency = editCurrencyInput.value;
-
-    if (!name || isNaN(amount) || amount <= 0) {
-      alert('Please enter valid details.');
-      return;
-    }
-
-    const index = expenses.findIndex(e => e.id === currentEditId);
-    if (index === -1) return;
-
-    expenses[index] = { id: currentEditId, name, amount, category, date, currency };
-    saveExpenses();
-    updateExpensesDisplay();
-    updateChart();
-    updateSummary();
-    closeModal();
-  }
-
-  function deleteExpense(id) {
-    if (!confirm('Delete this expense?')) return;
-    expenses = expenses.filter(e => e.id !== id);
-    saveExpenses();
-    updateExpensesDisplay();
-    updateChart();
-    updateSummary();
-  }
-
-  function saveExpenses() {
-    localStorage.setItem('expenses', JSON.stringify(expenses));
-  }
+  const expensesList = document.getElementById('expenses-list');
+  const monthSelect = document.getElementById("month-select");
+  const chartsWrapper = document.getElementById("charts-wrapper");
 
   function getCurrencySymbol(currency) {
     const symbols = { USD: '$', EUR: '€', GBP: '£', INR: '₹', JPY: '¥' };
     return symbols[currency] || currency + ' ';
   }
 
-  addExpenseBtn.addEventListener('click', addExpense);
-  modalSaveBtn.addEventListener('click', saveEdit);
-  modalCancelBtn.addEventListener('click', closeModal);
-  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-
-  updateExpensesDisplay();
-  updateChart();
-  updateSummary();
-
-
- function saveLimits() {
-  const monthlyLimit = parseFloat(document.getElementById("monthlyLimit").value) || 0;
-  const weeklyLimit = parseFloat(document.getElementById("weeklyLimit").value) || 0;
-
-  localStorage.setItem("monthlyLimit", monthlyLimit);
-  localStorage.setItem("weeklyLimit", weeklyLimit);
-
-  updateLimitDisplay();
-  alert("Limits saved!");
-}
-
-function loadLimits() {
-  const monthlyLimit = parseFloat(localStorage.getItem("monthlyLimit")) || 0;
-  const weeklyLimit = parseFloat(localStorage.getItem("weeklyLimit")) || 0;
-
-  document.getElementById("monthlyLimitDisplay").textContent = monthlyLimit;
-  document.getElementById("weeklyLimitDisplay").textContent = weeklyLimit;
-}
-
-function updateLimitDisplay() {
-  loadLimits();
-
-  // Example: calculate totals
-  const monthlySpent = expenses.reduce((sum, e) => sum + e.amount, 0);
-  const weeklySpent = expenses.reduce((sum, e) => sum + e.amount, 0); // Replace with real weekly logic
-
-  document.getElementById("monthlySpent").textContent = monthlySpent.toFixed(2);
-  document.getElementById("weeklySpent").textContent = weeklySpent.toFixed(2);
-
-  const monthlyLimit = parseFloat(localStorage.getItem("monthlyLimit")) || 0;
-  const weeklyLimit = parseFloat(localStorage.getItem("weeklyLimit")) || 0;
-
-  const warning = document.getElementById("warningMsg");
-  if (monthlyLimit && monthlySpent > monthlyLimit) {
-    warning.textContent = "⚠️ Monthly limit exceeded!";
-  } else if (weeklyLimit && weeklySpent > weeklyLimit) {
-    warning.textContent = "⚠️ Weekly limit exceeded!";
-  } else {
-    warning.textContent = "";
+  function saveExpenses() {
+    if (!currentUser) return;
+    localStorage.setItem(`expenses_${currentUser}`, JSON.stringify(expenses));
+    localStorage.setItem("username", currentUser);
   }
-}
 
-// Run on page load
-loadLimits();
-updateLimitDisplay();
- 
+  function loadExpenses() {
+    if (!currentUser) return;
+    expenses = JSON.parse(localStorage.getItem(`expenses_${currentUser}`)) || [];
+  }
+
+  function updateExpensesDisplay() {
+    expensesList.innerHTML = '';
+    if (expenses.length === 0) {
+      expensesList.innerHTML = '<p>No expenses yet.</p>';
+      return;
+    }
+    expenses.forEach(expense => {
+      const div = document.createElement('div');
+      div.classList.add('expense-item');
+      div.innerHTML = `
+        <span>${expense.date} - ${expense.name} (${expense.category}): ${getCurrencySymbol(expense.currency)}${expense.amount.toFixed(2)}</span>
+        <span class="expense-actions">
+          <button onclick="deleteExpense(${expense.id})">Delete</button>
+        </span>
+      `;
+      expensesList.appendChild(div);
+    });
+  }
+
+  function updateMonthOptions() {
+    const months = [...new Set(expenses.map(e => e.date.slice(0,7)))];
+    monthSelect.innerHTML = `<option value="all">All</option>` + 
+      months.map(m => `<option value="${m}">${m}</option>`).join("");
+  }
+
+  function updateChartsByMonth(filter = "all") {
+    charts.forEach(c => c.destroy());
+    charts = [];
+    chartsWrapper.innerHTML = "";
+
+    if (expenses.length === 0) {
+      chartsWrapper.innerHTML = "<p>No expenses yet.</p>";
+      return;
+    }
+
+    const monthlyData = {};
+    for (const expense of expenses) {
+      const month = expense.date.slice(0, 7);
+      if (!monthlyData[month]) {
+        monthlyData[month] = { Food: 0, Transport: 0, Entertainment: 0, Bills: 0, Other: 0 };
+      }
+      monthlyData[month][expense.category] += expense.amount;
+    }
+
+    Object.entries(monthlyData).forEach(([month, sums]) => {
+      if (filter !== "all" && filter !== month) return;
+
+      const canvas = document.createElement("canvas");
+      const title = document.createElement("h4");
+      title.textContent = month;
+
+      chartsWrapper.appendChild(title);
+      chartsWrapper.appendChild(canvas);
+
+      const chart = new Chart(canvas.getContext("2d"), {
+        type: "doughnut",
+        data: {
+          labels: categories,
+          datasets: [{
+            data: categories.map(cat => sums[cat]),
+            backgroundColor: ['#ff6384', '#3a9bdc', '#f3ca74', '#6bc5b6', '#8a72e6']
+          }]
+        },
+        options: { responsive: true, plugins: { legend: { position: "bottom" } } }
+      });
+      charts.push(chart);
+    });
+  }
+
+  monthSelect.addEventListener("change", e => {
+    updateChartsByMonth(e.target.value);
+  });
+
+  document.getElementById("add-expense-btn").addEventListener("click", () => {
+    const name = document.getElementById("expense-name").value.trim();
+    const amount = parseFloat(document.getElementById("expense-amount").value);
+    const category = document.getElementById("expense-category").value;
+    const date = document.getElementById("expense-date").value || new Date().toISOString().slice(0,10);
+    const currency = document.getElementById("currency").value;
+    if (!name || isNaN(amount) || amount <= 0) {
+      alert("Enter valid expense details.");
+      return;
+    }
+    expenses.push({ id: Date.now(), name, amount, category, date, currency });
+    saveExpenses();
+    updateExpensesDisplay();
+    updateMonthOptions();
+    updateChartsByMonth(monthSelect.value);
+    document.getElementById("expense-name").value = "";
+    document.getElementById("expense-amount").value = "";
+  });
+
+  function deleteExpense(id) {
+    expenses = expenses.filter(e => e.id !== id);
+    saveExpenses();
+    updateExpensesDisplay();
+    updateMonthOptions();
+    updateChartsByMonth(monthSelect.value);
+  }
+
+  document.getElementById("save-limits-btn").addEventListener("click", () => {
+    if (!currentUser) {
+      alert("Please log in first!");
+      return;
+    }
+    const monthlyLimit = document.getElementById("monthly-limit").value;
+    const weeklyLimit = document.getElementById("weekly-limit").value;
+    localStorage.setItem(`monthlyLimit_${currentUser}`, monthlyLimit);
+    localStorage.setItem(`weeklyLimit_${currentUser}`, weeklyLimit);
+    localStorage.setItem("username", currentUser);
+    alert("Limits saved successfully!");
+  });
+
+  // Login
+  document.getElementById("login-btn").addEventListener("click", () => {
+    const username = document.getElementById("username").value.trim();
+    if (!username) {
+      alert("Please enter a username");
+      return;
+    }
+    currentUser = username;
+    loadExpenses();
+    updateExpensesDisplay();
+    updateMonthOptions();
+    updateChartsByMonth();
+    document.getElementById("login-panel").style.display = "none";
+    document.getElementById("app-main").style.display = "grid";
+  });
 </script>
-<div id="budget-section">
-<h3>Set Spending Limits</h3>
-<input id="monthlyLimit" placeholder="Monthly Limit" type="number"/>
-<input id="weeklyLimit" placeholder="Weekly Limit" type="number"/>
-<button onclick="saveLimits()">SAVE</button>
-<div id="budget-summary">
-    Monthly Spent: <span id="monthlySpent">0</span> / Limit: <span id="monthlyLimitDisplay">0</span><br/>
-    Weekly Spent: <span id="weeklySpent">0</span> / Limit: <span id="weeklyLimitDisplay">0</span><br/>
-<span class="warning" id="warningMsg"></span>
-</div>
-<!-- New navigation button -->
-<div style="margin-top: 15px; text-align:center;">
-<button onclick="window.location.href='expensesummary.html'">View Summary</button>
-</div>
-</div>
+
+
+
+
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
+<script>
+  document.getElementById("scan-receipt-btn").addEventListener("click", () => {
+    const fileInput = document.getElementById("receipt-upload");
+    const statusEl = document.getElementById("scan-status");
+
+    if (!fileInput.files.length) {
+      alert("Please upload a receipt image first.");
+      return;
+    }
+
+    // Reset fields before scanning
+    document.getElementById("expense-name").value = "";
+    document.getElementById("expense-amount").value = "";
+    document.getElementById("expense-date").value = "";
+    document.getElementById("currency").value = "USD";
+    document.getElementById("scan-preview").style.display = "none";
+
+    const file = fileInput.files[0];
+    statusEl.textContent = "Scanning receipt... Please wait ⏳";
+
+    Tesseract.recognize(file, 'eng')
+      .then(({ data: { text } }) => {
+        statusEl.textContent = "Scan complete ✅";
+        console.log("Receipt OCR Text:", text);
+
+        // --- Extract Store Name (use first line of text)
+        const lines = text.split("\n").map(l => l.trim()).filter(l => l.length > 0);
+        let storeName = lines.length > 0 ? lines[0] : "Receipt Item";
+
+        // --- Extract Amount (line-based detection with context)
+        let amount = null;
+        let detectedLine = "Not found";
+
+        const keywords = /(total|grand\s*total|amount\s*due|sum|varekjøp)/i;
+        for (let line of lines) {
+          if (keywords.test(line)) {
+            let numMatch = line.match(/(\d+[\.,]\d{2})/);
+            if (numMatch) {
+              amount = parseFloat(numMatch[1].replace(",", "."));
+              detectedLine = line;
+              break;
+            }
+          }
+        }
+
+        if (!amount) {
+          let currencyMatch = text.match(/(NOK|USD|EUR|GBP|INR|JPY|kr)\s*(\d+[\.,]\d{2})/i);
+          if (currencyMatch) {
+            amount = parseFloat(currencyMatch[2].replace(",", "."));
+            detectedLine = currencyMatch[0];
+          }
+        }
+
+        if (!amount) {
+          const allNumbers = text.match(/\d+[\.,]\d{2}/g);
+          if (allNumbers) {
+            const numericValues = allNumbers
+              .map(n => parseFloat(n.replace(",", ".")))
+              .filter(v => v > 1 && v < 10000 && v != 2023 && v != 2024);
+            if (numericValues.length > 0) {
+              amount = Math.max(...numericValues);
+              detectedLine = "Fallback (largest number: " + amount + ")";
+            }
+          }
+        }
+
+        // --- Extract Date (common formats)
+        const dateRegex = /(\d{4}[-/]\d{2}[-/]\d{2}|\d{2}[-/]\d{2}[-/]\d{4})/;
+        const dateMatch = text.match(dateRegex);
+        let date = dateMatch ? dateMatch[0] : "";
+
+        // --- Detect Currency Symbol/Text
+        let currency = "USD"; // default
+        if (text.includes("€")) currency = "EUR";
+        else if (text.includes("£")) currency = "GBP";
+        else if (text.includes("₹")) currency = "INR";
+        else if (text.includes("¥")) currency = "JPY";
+        else if (text.match(/NOK|kr/i)) currency = "NOK";
+
+        // --- Suggest Category
+        let category = "Other";
+        const lowerText = text.toLowerCase();
+        if (/(pizza|restaurant|cafe|burger|mcdonald|kfc|food|grocery)/.test(lowerText)) {
+          category = "Food";
+        } else if (/(taxi|uber|bus|train|flight|fuel|petrol|transport)/.test(lowerText)) {
+          category = "Transport";
+        } else if (/(netflix|cinema|movie|spotify|concert|entertainment)/.test(lowerText)) {
+          category = "Entertainment";
+        } else if (/(electricity|gas|water|internet|phone|bill)/.test(lowerText)) {
+          category = "Bills";
+        }
+
+        // --- Show preview
+        document.getElementById("preview-store").textContent = "Store: " + storeName;
+        document.getElementById("preview-amount").textContent = "Amount: " + (amount ? amount.toFixed(2) : "Not found");
+        document.getElementById("preview-date").textContent = "Date: " + (date || "Not found");
+        document.getElementById("preview-currency").textContent = "Currency: " + currency;
+        document.getElementById("preview-detected-line").textContent = "Detected from: " + detectedLine;
+        document.getElementById("scan-preview").style.display = "block";
+
+        // Preselect suggested category in dropdown
+        document.getElementById("preview-category-select").value = category;
+
+        // --- Apply values when user confirms
+        document.getElementById("use-scan-btn").onclick = () => {
+          document.getElementById("expense-name").value = storeName;
+          if (amount) document.getElementById("expense-amount").value = amount.toFixed(2);
+          if (date) {
+            if (/^\d{2}[-/]\d{2}[-/]\d{4}$/.test(date)) {
+              const [d, m, y] = date.split(/[-/]/);
+              date = `${y}-${m}-${d}`;
+            }
+            document.getElementById("expense-date").value = date;
+          }
+          document.getElementById("currency").value = currency;
+          document.getElementById("expense-category").value = document.getElementById("preview-category-select").value;
+          alert("Data applied to form! Now click 'ADD EXPENSE'.");
+        };
+      })
+      .catch(err => {
+        console.error(err);
+        statusEl.textContent = "Error scanning receipt ❌";
+      });
+  });
+</script>
+
+
+
+
+
+
+
+
+
 </body>
 </html>

@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Campaign Editor → Community Library</title>
+  <style>
+    :root{
+      --bg:#0a0a0a; /* black background */
+      --panel:#dcdcdc; /* light grey panels */
+      --panel-2:#f6f6f6;
+      --max-width:1000px;
+      --gap:18px;
+    }
+    *{box-sizing:border-box}
+    html,body{
+      height:100%;
+      margin:0;
+      font-family:Georgia, 'Times New Roman', serif;
+      background:var(--bg);
+      color:#111;
+    }
+    .container{max-width:var(--max-width);margin:28px auto;padding:18px}
+
+    header{
+      background:var(--panel);
+      padding:14px 18px;
+      border-top:8px solid #000;
+      border-bottom:8px solid #000;
+      text-align:center;
+    }
+    header h1{margin:0;font-size:34px;letter-spacing:2px}
+    header p{margin:6px 0 0;color:#333;font-size:14px}
+
+    .actions{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+    .btn{background:#000;color:#fff;padding:8px 12px;border-radius:6px;border:none;cursor:pointer;font-weight:700}
+    .btn.ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.15)}
+
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:var(--gap);margin-top:18px;align-items:start}
+    .panel{background:var(--panel);padding:18px;border:6px solid #000;border-radius:6px}
+    .panel h3{margin-top:0;font-size:18px}
+    .edit{margin-top:10px;background:var(--panel-2);padding:12px;border-radius:6px;border:1px solid rgba(0,0,0,0.08);min-height:60px;outline:none;white-space:pre-wrap}
+    .edit:empty:before{content:attr(data-placeholder);color:#666;display:block}
+    .full{grid-column:1 / -1}
+
+    .image-box{display:flex;align-items:center;justify-content:center}
+    .image-box img{width:100%;height:auto;display:block;border:6px solid #000;border-radius:4px}
+
+    footer{margin-top:18px;text-align:center;color:#ccc;font-size:13px}
+
+    @media (max-width:900px){
+      .grid{grid-template-columns:1fr}
+      .image-box img{max-height:220px;object-fit:cover}
+      header h1{font-size:28px}
+    }
+  </style>
+</head>
+<body>
+  <!-- ====== EDITOR PAGE ====== -->
+  <div class="container" id="editor">
+    <header>
+      <h1>CAMPAIGN — EDITABLE INFO</h1>
+      <p>Fill in your campaign details. Add a title and image. Click Save to draft or Finish to publish.</p>
+    </header>
+
+    <div class="actions">
+      <input type="text" id="campaignTitle" placeholder="Enter campaign title" style="padding:8px;border-radius:6px;border:1px solid #aaa;flex:1;min-width:220px">
+      <input type="file" id="campaignImage" accept="image/*" style="color:#fff">
+    </div>
+
+    <div class="actions">
+      <button class="btn" id="saveBtn">Save</button>
+      <button class="btn ghost" id="resetBtn">Reset</button>
+      <button class="btn" id="finishBtn">Finish</button>
+    </div>
+
+    <div class="grid">
+      <section class="panel">
+        <h3>1. Why it matters</h3>
+        <div id="why" class="edit" contenteditable="true"
+          data-placeholder="Explain why this campaign matters..."></div>
+      </section>
+
+      <aside class="image-box panel" style="padding:8px">
+        <img id="previewImg" src="" alt="Campaign image (preview)">
+      </aside>
+
+      <section class="panel full">
+        <h3>2. How the funds will be used</h3>
+        <div id="funds" class="edit" contenteditable="true"
+          data-placeholder="Describe budget items..."></div>
+      </section>
+
+      <section class="panel">
+        <h3>3. Impact</h3>
+        <div id="impact" class="edit" contenteditable="true"
+          data-placeholder="Describe expected impact..."></div>
+      </section>
+
+      <section class="panel">
+        <h3>4. Donor engagement</h3>
+        <div id="donor" class="edit" contenteditable="true"
+          data-placeholder="Explain donor updates & recognition..."></div>
+      </section>
+    </div>
+
+    <footer>
+      Tip: Use <strong>Save</strong> to keep content in this browser.  
+      Click <strong>Finish</strong> to lock and publish to the Community Library.
+    </footer>
+  </div>
+
+  <!-- ====== COMMUNITY LIBRARY PAGE ====== -->
+  <div id="communityPage" style="display:none">
+    <div class="container">
+      <header>
+        <h1 id="finalTitle">COMMUNITY LIBRARY</h1>
+      </header>
+
+      <div class="grid">
+        <div class="panel">
+          <h3>WHY IT MATTERS?</h3>
+          <p id="finalWhy"></p>
+        </div>
+
+        <div class="image-box">
+          <img id="finalImage" src="" alt="Community campaign image">
+        </div>
+
+        <div class="panel full">
+          <h3>HOW WILL THE FUNDS BE USED?</h3>
+          <p id="finalFunds"></p>
+        </div>
+
+        <div class="panel">
+          <h3>IMPACT</h3>
+          <p id="finalImpact"></p>
+        </div>
+
+        <div class="panel">
+          <h3>DONOR ENGAGEMENT</h3>
+          <p id="finalDonor"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const fields = ['why','funds','impact','donor'];
+    const saveBtn = document.getElementById('saveBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const finishBtn = document.getElementById('finishBtn');
+    const titleInput = document.getElementById('campaignTitle');
+    const imageInput = document.getElementById('campaignImage');
+    const previewImg = document.getElementById('previewImg');
+
+    // Load saved draft OR finished state
+    function loadContent(){
+      const finished = localStorage.getItem('campaign_finished');
+      if(finished === "true"){
+        showCommunity();
+        return;
+      }
+
+      // Load drafts
+      fields.forEach(id=>{
+        const el=document.getElementById(id);
+        const saved=localStorage.getItem('campaign_'+id);
+        if(saved!==null){ el.innerText=saved }
+      });
+      const savedTitle = localStorage.getItem('campaign_title');
+      if(savedTitle) titleInput.value = savedTitle;
+
+      const savedImage = localStorage.getItem('campaign_image');
+      if(savedImage){
+        previewImg.src = savedImage;
+        previewImg.alt = 'Uploaded image';
+      }
+    }
+
+    // Save draft
+    function saveContent(){
+      fields.forEach(id=>{
+        const el=document.getElementById(id);
+        localStorage.setItem('campaign_'+id, el.innerText.trim());
+      });
+      localStorage.setItem('campaign_title', titleInput.value.trim());
+      if(previewImg.src && previewImg.src.startsWith('data:')){
+        localStorage.setItem('campaign_image', previewImg.src);
+      }
+      saveBtn.textContent='Saved ✓';
+      setTimeout(()=> saveBtn.textContent='Save',1200);
+    }
+
+    // Reset everything
+    function resetContent(){
+      if(!confirm('Reset everything?')) return;
+      fields.forEach(id=>{
+        localStorage.removeItem('campaign_'+id);
+        document.getElementById(id).innerText='';
+      });
+      localStorage.removeItem('campaign_title');
+      localStorage.removeItem('campaign_image');
+      localStorage.removeItem('campaign_finished');
+      titleInput.value='';
+      previewImg.src = '';
+      previewImg.alt = 'No image selected';
+      location.reload();
+    }
+
+    // Show Community page with saved data
+    function showCommunity(){
+      document.getElementById('editor').style.display='none';
+      document.getElementById('communityPage').style.display='block';
+
+      document.getElementById('finalTitle').innerText =
+        localStorage.getItem('campaign_title') || 'Community Library';
+      document.getElementById('finalWhy').innerText =
+        localStorage.getItem('campaign_why') || '[empty]';
+      document.getElementById('finalFunds').innerText =
+        localStorage.getItem('campaign_funds') || '[empty]';
+      document.getElementById('finalImpact').innerText =
+        localStorage.getItem('campaign_impact') || '[empty]';
+      document.getElementById('finalDonor').innerText =
+        localStorage.getItem('campaign_donor') || '[empty]';
+
+      const savedImage = localStorage.getItem('campaign_image');
+      if(savedImage){
+        document.getElementById('finalImage').src = savedImage;
+      }
+    }
+
+    // Finish campaign
+    function finishContent(){
+      saveContent(); // save one last time
+      localStorage.setItem('campaign_finished', "true");
+      showCommunity();
+    }
+
+    // Events
+    saveBtn.addEventListener('click', saveContent);
+    resetBtn.addEventListener('click', resetContent);
+    finishBtn.addEventListener('click', finishContent);
+
+    // Init
+    loadContent();
+  </script>
+</body>
+</html>

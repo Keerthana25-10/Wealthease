@@ -1,179 +1,315 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Expense Summary</title>
 <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f0f9f9;
-      margin: 0;
-      padding: 20px;
-    }
-    header {
-      text-align: center;
-      background: #d6f7f7;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-    }
-    h1 { margin: 0; }
-    .summary-box {
-      background: #fff;
-      padding: 15px;
-      margin-bottom: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    .warning { color: red; font-weight: bold; }
-    #calendar table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-    #calendar th, #calendar td {
-      border: 1px solid #ccc;
-      text-align: center;
-      padding: 8px;
-      height: 60px;
-      vertical-align: top;
-    }
-    #calendar td span {
-      display: block;
-      font-size: 0.8em;
-      margin-top: 5px;
-      color: #333;
-    }
-    canvas {
-      margin-top: 15px;
-      max-width: 100%;
-    }
-  </style>
+  @import url('https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap');
+  body {
+    margin: 0;
+    font-family: 'Didact Gothic', sans-serif;
+    background-color: #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    color: #333;
+  }
+  header {
+    background-color: #d6f7f7;
+    width: 90vw;
+    max-width: 1000px;
+    padding: 15px 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  header h1 {
+    margin: 0;
+    font-weight: 600;
+    font-size: 1.8rem;
+    color: #222;
+  }
+  header p {
+    margin: 5px 0;
+    color: #444;
+  }
+  #changeUserBtn {
+    margin-top: 10px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    background: #4a90e2;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.3s;
+  }
+  #changeUserBtn:hover {
+    background: #357ABD;
+    transform: translateY(-2px);
+  }
+  .card {
+    background: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    width: 90vw;
+    max-width: 1000px;
+  }
+  .card h3 {
+    margin-top: 0;
+    color: #4a4a9d;
+    text-align: center;
+  }
+  .warning { color: red; font-weight: bold; text-align: center; }
+  #calendar table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  #calendar th, #calendar td {
+    border: 1px solid #ccc;
+    text-align: center;
+    padding: 8px;
+    height: 60px;
+    vertical-align: top;
+  }
+  #calendar td span {
+    display: block;
+    font-size: 0.8em;
+    margin-top: 5px;
+    color: #333;
+  }
+  canvas {
+    margin-top: 15px;
+    max-width: 100%;
+  }
+  .nav-btn {
+    background: #ea93ff;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    margin: 5px;
+  }
+  .nav-btn:hover {
+    background: #c168cc;
+    transform: translateY(-2px);
+  }
+</style>
 </head>
 <body>
 <header>
-<h1>Monthly &amp; Weekly Expense Summary</h1>
+  <h1>Monthly & Weekly Expense Summary</h1>
+  <p id="userGreeting"></p>
 </header>
-<!-- Budget Summary -->
-<div class="summary-box">
-<h3>Budget Summary</h3>
-<p>Monthly Spent: <span id="monthlySpent">0</span> / Limit: <span id="monthlyLimitDisplay">0</span></p>
-<p>Weekly Spent: <span id="weeklySpent">0</span> / Limit: <span id="weeklyLimitDisplay">0</span></p>
-<p class="warning" id="warningMsg"></p>
+
+<div class="card">
+  <h3>Budget Summary</h3>
+  <p>Total Spent: <span id="totalSpent">0</span></p>
+  <p>This Month Spent: <span id="monthlySpent">0</span> / Limit: <span id="monthlyLimitDisplay">0</span></p>
+  <p>This Week Spent: <span id="weeklySpent">0</span> / Limit: <span id="weeklyLimitDisplay">0</span></p>
+  <p class="warning" id="warningMsg"></p>
 </div>
-<!-- Weekly Trends -->
-<div class="summary-box">
-<h3>Weekly Spending Trends</h3>
-<canvas id="spendingChart"></canvas>
+
+<div class="card">
+  <h3>Weekly Spending Trends</h3>
+  <div id="weeklyCharts"></div>
 </div>
-<!-- Monthly Calendar -->
-<div class="summary-box">
-<h3>Monthly Calendar</h3>
-<div id="calendar"></div>
+
+<div class="card">
+  <h3>Monthly Calendar</h3>
+  <div style="text-align:center; margin-bottom:10px;">
+    <button onclick="prevMonth()" class="nav-btn">◀ Prev</button>
+    <span id="calendarTitle"></span>
+    <button onclick="nextMonth()" class="nav-btn">Next ▶</button>
+  </div>
+  <div id="calendar"></div>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const expenses = JSON.parse(localStorage.getItem('expenses')) || [];
-    const monthlyLimit = parseFloat(localStorage.getItem('monthlyLimit')) || 0;
-    const weeklyLimit = parseFloat(localStorage.getItem('weeklyLimit')) || 0;
+  const currentUser = localStorage.getItem("username");
 
-    function getWeekNumber(d) {
-      const onejan = new Date(d.getFullYear(),0,1);
-      return Math.ceil((((d-onejan)/86400000)+onejan.getDay()+1)/7);
-    }
+  if (!currentUser) {
+    alert("No user logged in. Redirecting to login...");
+    window.location.href = "9.html";
+  }
 
-    function updateSummary() {
-      const now = new Date();
-      const currentMonth = now.toISOString().slice(0,7);
-      const currentWeek = getWeekNumber(now);
+  document.getElementById("userGreeting").textContent = "Logged in as: " + currentUser;
 
-      const monthlySpent = expenses
-        .filter(e=>e.date.startsWith(currentMonth))
-        .reduce((s,e)=>s+e.amount,0);
-      const weeklySpent = expenses
-        .filter(e=>getWeekNumber(new Date(e.date))===currentWeek)
-        .reduce((s,e)=>s+e.amount,0);
+  const expenses = currentUser 
+    ? (JSON.parse(localStorage.getItem(`expenses_${currentUser}`)) || [])
+    : [];
 
-      document.getElementById('monthlySpent').textContent = monthlySpent.toFixed(2);
-      document.getElementById('weeklySpent').textContent = weeklySpent.toFixed(2);
-      document.getElementById('monthlyLimitDisplay').textContent = monthlyLimit;
-      document.getElementById('weeklyLimitDisplay').textContent = weeklyLimit;
+  const monthlyLimit = currentUser 
+    ? parseFloat(localStorage.getItem(`monthlyLimit_${currentUser}`)) || 0
+    : 0;
 
-      let warning = "";
-      if (weeklyLimit > 0 && weeklySpent >= weeklyLimit) {
-        warning = "⚠️ Near Weekly Limit!";
-      }
-      if (monthlyLimit > 0 && monthlySpent >= monthlyLimit) {
-        warning = "⚠️ Near Monthly Limit!";
-      }
-      document.getElementById('warningMsg').textContent = warning;
-    }
+  const weeklyLimit = currentUser 
+    ? parseFloat(localStorage.getItem(`weeklyLimit_${currentUser}`)) || 0
+    : 0;
 
-    function buildCalendar(year, month) {
-      const firstDay = new Date(year, month, 1).getDay();
-      const daysInMonth = new Date(year, month+1, 0).getDate();
-      let html = "<table><tr>";
-      const weekDays = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-      weekDays.forEach(d => html += `<th>${d}</th>`);
-      html += "</tr><tr>";
+  const currency = "₹"; 
 
-      for (let i=0; i<firstDay; i++) html += "<td></td>";
+  function getWeekNumber(d) {
+    const onejan = new Date(d.getFullYear(),0,1);
+    return Math.ceil((((d-onejan)/86400000)+onejan.getDay()+1)/7);
+  }
 
-      for (let d=1; d<=daysInMonth; d++) {
-        const dateStr = `${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
-        const dailyTotal = expenses
-          .filter(e=>e.date===dateStr)
-          .reduce((sum,e)=>sum+e.amount,0);
-        html += `<td>${d}<br><span>${dailyTotal ? dailyTotal.toFixed(2) : ""}</span></td>`;
-        if ((d+firstDay)%7===0) html += "</tr><tr>";
-      }
-      html += "</tr></table>";
-      document.getElementById("calendar").innerHTML = html;
-    }
-
-    function buildWeeklyChart() {
-  const now = new Date();
-  const currentMonth = now.getMonth();
-  const currentYear = now.getFullYear();
-
-  // Group expenses by week in the current month
-  const weeklyTotals = {};
-  expenses.forEach(e => {
-    const d = new Date(e.date);
-    if (d.getMonth() === currentMonth && d.getFullYear() === currentYear) {
-      const wk = getWeekNumber(d);
-      weeklyTotals[wk] = (weeklyTotals[wk] || 0) + e.amount;
-    }
-  });
-
-  const weeks = Object.keys(weeklyTotals).sort((a,b)=>a-b);
-  const totals = weeks.map(wk => weeklyTotals[wk]);
-
-  const ctx = document.getElementById('spendingChart').getContext('2d');
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: weeks.map(wk => `Week ${wk}`),
-      datasets: [{
-        label: 'Expenses',
-        data: totals,
-        backgroundColor: '#4ade80'
-      }]
-    },
-    options: { scales: { y: { beginAtZero: true } } }
-  });
-}
-
-    // Init
-    updateSummary();
+  function updateSummary() {
     const now = new Date();
-    buildCalendar(now.getFullYear(), now.getMonth());
-    buildWeeklyChart();
-  </script>
+    const currentMonth = now.toISOString().slice(0,7);
+    const currentWeek = getWeekNumber(now);
+
+    const totalSpent = expenses.reduce((s,e)=>s+e.amount,0);
+    const monthlySpent = expenses
+      .filter(e=>e.date.startsWith(currentMonth))
+      .reduce((s,e)=>s+e.amount,0);
+    const weeklySpent = expenses
+      .filter(e=>getWeekNumber(new Date(e.date))===currentWeek && new Date(e.date).getFullYear()===now.getFullYear())
+      .reduce((s,e)=>s+e.amount,0);
+
+    document.getElementById('totalSpent').textContent = currency + totalSpent.toFixed(2);
+    document.getElementById('monthlySpent').textContent = currency + monthlySpent.toFixed(2);
+    document.getElementById('weeklySpent').textContent = currency + weeklySpent.toFixed(2);
+    document.getElementById('monthlyLimitDisplay').textContent = currency + monthlyLimit;
+    document.getElementById('weeklyLimitDisplay').textContent = currency + weeklyLimit;
+
+    let warnings = [];
+    if (weeklyLimit > 0) {
+      if (weeklySpent > weeklyLimit) warnings.push("⚠️ Weekly limit exceeded!");
+      else if (weeklySpent >= weeklyLimit * 0.9) warnings.push("⚠️ Near Weekly Limit!");
+    }
+    if (monthlyLimit > 0) {
+      if (monthlySpent > monthlyLimit) warnings.push("⚠️ Monthly limit exceeded!");
+      else if (monthlySpent >= monthlyLimit * 0.9) warnings.push("⚠️ Near Monthly Limit!");
+    }
+    document.getElementById('warningMsg').textContent = warnings.join(" | ");
+  }
+
+  function buildCalendar(year, month) {
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month+1, 0).getDate();
+
+    const dailyBudget = monthlyLimit > 0 ? monthlyLimit / daysInMonth : null;
+
+    let html = "<table><tr>";
+    const weekDays = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+    weekDays.forEach(d => html += `<th>${d}</th>`);
+    html += "</tr><tr>";
+
+    for (let i=0; i<firstDay; i++) html += "<td></td>";
+
+    for (let d=1; d<=daysInMonth; d++) {
+      const dateStr = `${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+      const dailyTotal = expenses
+        .filter(e=>e.date===dateStr)
+        .reduce((sum,e)=>sum+e.amount,0);
+
+      let bgColor = "#fff"; 
+      if (dailyTotal > 0 && dailyBudget) {
+        if (dailyTotal > dailyBudget) bgColor = "#fecaca"; 
+        else bgColor = "#d1fae5"; 
+      }
+
+      html += `<td style="background:${bgColor}">${d}<br><span>${dailyTotal ? currency + dailyTotal.toFixed(2) : ""}</span></td>`;
+      if ((d+firstDay)%7===0) html += "</tr><tr>";
+    }
+
+    const lastDay = new Date(year, month, daysInMonth).getDay();
+    for (let i=lastDay+1; i<7; i++) {
+      html += "<td></td>";
+    }
+
+    html += "</tr></table>";
+    document.getElementById("calendar").innerHTML = html;
+  }
+
+  function buildWeeklyChart() {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const weeklyData = {};
+
+    expenses.forEach(e => {
+      const d = new Date(e.date);
+      if (d.getFullYear() === currentYear) {
+        const week = getWeekNumber(d);
+        const day = d.getDay();
+        if (!weeklyData[week]) {
+          weeklyData[week] = [0,0,0,0,0,0,0];
+        }
+        weeklyData[week][day] += e.amount;
+      }
+    });
+
+    document.getElementById("weeklyCharts").innerHTML = "";
+    Object.keys(weeklyData).sort((a,b)=>a-b).forEach(week => {
+      const container = document.getElementById("weeklyCharts");
+      const canvas = document.createElement("canvas");
+      container.appendChild(canvas);
+      const ctx = canvas.getContext("2d");
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],
+          datasets: [{
+            label: `Week ${week}`,
+            data: weeklyData[week],
+            backgroundColor: '#4ade80'
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: `Week ${week} Daily Breakdown`
+            }
+          },
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+    });
+  }
+
+  let now = new Date();
+  let currentYear = now.getFullYear();
+  let currentMonth = now.getMonth();
+
+  function updateCalendar() {
+    const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    document.getElementById("calendarTitle").textContent = `${monthNames[currentMonth]} ${currentYear}`;
+    buildCalendar(currentYear, currentMonth);
+  }
+
+  function prevMonth() {
+    currentMonth--;
+    if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+    updateCalendar();
+  }
+
+  function nextMonth() {
+    currentMonth++;
+    if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+    updateCalendar();
+  }
+
+  updateSummary();
+  updateCalendar();
+  buildWeeklyChart();
+</script>
+
 <div style="margin-top: 20px; text-align:center;">
-<button onclick="window.location.href='expense.html'">Back to Tracker</button>
+  <button onclick="window.location.href='expense.html'" class="nav-btn">Back to Tracker</button>
+  <button onclick="window.location.href='reminder.html'" class="nav-btn" style="background:#8b5cf6;">View Monthly Reminders</button>
 </div>
 </body>
 </html>

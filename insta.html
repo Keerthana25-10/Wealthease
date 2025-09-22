@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WealthEase</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #fafafa;
+      color: #262626;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      padding: 20px;
+      border-bottom: 1px solid #dbdbdb;
+      background: #fff;
+    }
+
+    .profile-pic {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 2px solid #dbdbdb;
+      margin-right: 30px;
+      object-fit: cover;
+    }
+
+    .profile-info {
+      flex: 1;
+    }
+
+    .profile-info h2 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 500;
+    }
+
+    .stats {
+      display: flex;
+      gap: 20px;
+      margin: 10px 0;
+    }
+
+    .stats div {
+      font-size: 14px;
+    }
+
+    .bio {
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    .posts {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      margin: 10px;
+    }
+
+    .posts img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="profile-header">
+    <img src="logo.jpg" alt="Profile Picture" class="profile-pic">
+    <div class="profile-info">
+      <h2>WEALTHEASE</h2>
+      <div class="stats">
+        <div><strong>25</strong> posts</div>
+        <div><strong>150</strong> followers</div>
+        <div><strong>180</strong> following</div>
+      </div>
+      <div class="bio">
+        ✨ Just a demo account <br>
+        📍 WEBSITE NAME: WealthEase <br>
+        🌐 For project use only
+      </div>
+    </div>
+  </div>
+
+  <div class="posts">
+    <img src="post1.jpeg" alt="Post 1">
+    <img src="post2.jpeg" alt="Post 2">
+    <img src="post3.jpeg" alt="Post 3">
+    <img src="post4.jpeg" alt="Post 4">
+  </div>
+
+</body>
+</html>
